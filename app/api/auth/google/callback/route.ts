@@ -82,13 +82,8 @@ export async function GET(req: NextRequest) {
 
     const profile: GoogleUserInfo = await profileRes.json();
 
-    // 3. Read the onboarding draft + chosen subdomain from a short-lived cookie.
-    //    The client sets this cookie (via /api/auth/prepare) right before
-    //    redirecting to /api/auth/google, since we can't read localStorage here.
-    const draftCookie = req.cookies.get("onboarding_draft")?.value;
-    const draft = draftCookie ? JSON.parse(decodeURIComponent(draftCookie)) : {};
 
-    // 4. Create (or fetch existing) user in the Node backend
+    // 3. Create (or fetch existing) user in the Node backend
     const createRes = await fetch(`${backendUrl}/users`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -97,7 +92,6 @@ export async function GET(req: NextRequest) {
         email: profile.email,
         name: profile.name,
         avatar: profile.picture,
-        ...draft,
       }),
     });
 

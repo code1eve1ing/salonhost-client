@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { getMe } from "@/lib/api";
+import { getMe, updateSubdomain, updateUserDetails } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
 function AuthCompleteInner() {
@@ -27,6 +27,13 @@ function AuthCompleteInner() {
         // then overwrite with the full user payload once fetched.
         useAuthStore.setState({ token });
         const user = await getMe();
+        const dataToSync = JSON.parse(localStorage.getItem('data_to_sync') || '{}')
+        const {subdomain, ...userDetails} = dataToSync
+        await updateUserDetails(userDetails || {})
+        if(subdomain){
+          await updateSubdomain(subdomain)
+        }
+        localStorage.removeItem('data_to_sync')
         setSession(token, user);
         resetOnboarding(); // clear the draft now that the account is created
         router.replace("/app");

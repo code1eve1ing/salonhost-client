@@ -36,12 +36,14 @@ function OnboardingInner() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      console.log('data', subdomain, details)
       const data_to_sync = {
         subdomain, 
         ...details
       }
-      return
+      localStorage.setItem('data_to_sync', JSON.stringify(data_to_sync))
+      setTimeout(() => {
+        window.location.href = "/api/auth/google";
+      }, 200);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Something went wrong");
       setSubmitting(false);

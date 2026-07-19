@@ -16,10 +16,6 @@ export function useRequireAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!token) {
-      router.replace("/onboarding");
-      return;
-    }
 
     let cancelled = false;
     getMe()
@@ -29,7 +25,7 @@ export function useRequireAuth() {
           setLoading(false);
         }
       })
-      .catch(() => {
+      .catch((e) => {
         if (!cancelled) {
           logout();
           router.replace("/onboarding");
