@@ -4,7 +4,7 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { getMe, updateSubdomain, updateUserDetails } from "@/lib/api";
+import { getMe, updateSubdomain, updateTemplate, updateUserDetails } from "@/lib/api";
 import { Loader2 } from "lucide-react";
 
 function AuthCompleteInner() {
@@ -34,6 +34,9 @@ function AuthCompleteInner() {
           await updateSubdomain(subdomain)
         }
         localStorage.removeItem('data_to_sync')
+        const templateToSync = localStorage.getItem('template_to_sync') || ''
+        await updateTemplate(templateToSync)
+        localStorage.removeItem('template_to_sync')
         setSession(token, user);
         resetOnboarding(); // clear the draft now that the account is created
         router.replace("/app");

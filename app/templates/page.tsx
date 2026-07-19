@@ -127,7 +127,9 @@ export default function TemplatesPage() {
         <div className="mx-auto max-w-6xl px-4 py-8 md:hidden">
           <div className="flex flex-col gap-4">
             {templates.map((t) => (
-              <MobileTemplateCard key={t.id} template={t} onUse={() => router.push("/onboarding")} />
+              <MobileTemplateCard key={t.id} template={t} onUse={() => {
+                localStorage.setItem('template_to_sync', t.id)
+                router.push("/onboarding")}} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
@@ -138,7 +140,9 @@ export default function TemplatesPage() {
         <div className="mx-auto hidden max-w-6xl px-4 py-8 md:block md:px-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {templates.map((t) => (
-              <DesktopTemplateCard key={t.id} template={t} onUse={() => router.push("/onboarding")} />
+              <DesktopTemplateCard key={t.id} template={t} onUse={() => {
+                localStorage.setItem('template_to_sync', t.id)
+                router.push("/onboarding")}} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />

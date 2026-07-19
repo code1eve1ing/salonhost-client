@@ -110,6 +110,13 @@ export async function updateSubdomain(subdomain: string): Promise<User> {
   return data.data;
 }
 
+export async function updateTemplate(template_id: string): Promise<User> {
+  const { data } = await apiClient.patch<ApiEnvelope<User>>("/users/me/template", {
+    template_id,
+  });
+  return data.data;
+}
+
 export async function checkSubdomainAvailability(
   value: string
 ): Promise<{ available: boolean; reason: string | null }> {
