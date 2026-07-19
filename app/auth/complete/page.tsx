@@ -35,7 +35,9 @@ function AuthCompleteInner() {
         }
         localStorage.removeItem('data_to_sync')
         const templateToSync = localStorage.getItem('template_to_sync') || ''
-        await updateTemplate(templateToSync)
+        if(templateToSync){
+          await updateTemplate(templateToSync)
+        }
         localStorage.removeItem('template_to_sync')
         setSession(token, user);
         resetOnboarding(); // clear the draft now that the account is created
