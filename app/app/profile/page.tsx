@@ -81,6 +81,7 @@ export default function ProfilePage() {
             value={newSubdomain}
             onChange={setNewSubdomain}
             onAvailabilityChange={setSubdomainAvailable}
+            userDomain={user?.subdomain}
           />
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex items-center gap-3">

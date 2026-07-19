@@ -9,20 +9,25 @@ import { CheckCircle2, Loader2, XCircle } from "lucide-react";
 
 interface SubdomainFieldProps {
   value: string;
+  userDomain?: string | null;
   onChange: (value: string) => void;
   onAvailabilityChange?: (available: boolean) => void;
 }
 
 type CheckState = "idle" | "checking" | "available" | "unavailable" | "invalid";
 
-export function SubdomainField({ value, onChange, onAvailabilityChange }: SubdomainFieldProps) {
+export function SubdomainField({ value, onChange, onAvailabilityChange, userDomain }: SubdomainFieldProps) {
   const [status, setStatus] = useState<CheckState>("idle");
   const [reason, setReason] = useState<string | null>(null);
   const debouncedValue = useDebouncedValue(value, 500);
 
   useEffect(() => {
     const normalized = debouncedValue.toLowerCase().trim();
-
+    if (userDomain && userDomain.length > 2 && userDomain === debouncedValue) {
+      setStatus("idle")
+      setReason(null)
+      return
+    }
     if (!normalized) {
       setStatus("idle");
       onAvailabilityChange?.(false);
@@ -66,7 +71,10 @@ export function SubdomainField({ value, onChange, onAvailabilityChange }: Subdom
         <Input
           id="subdomain"
           value={value}
-          onChange={(e) => onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+          onChange={(e) => {
+              onAvailabilityChange?.(false);
+            onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
+          }}
           placeholder="your-salon-name"
           className="border-none focus-visible:ring-0"
         />
