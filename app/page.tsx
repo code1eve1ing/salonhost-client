@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,6 +28,7 @@ import {
 } from "lucide-react";
 
 export default function LandingPage() {
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -62,7 +64,7 @@ export default function LandingPage() {
             <Button variant="ghost" size="sm">
               Log in
             </Button>
-            <Button size="sm">Start free trial</Button>
+            <Button size="sm" onClick={() => router.push("/onboarding")}>Start free trial</Button>
           </div>
 
           <button
@@ -91,7 +93,7 @@ export default function LandingPage() {
               </a>
               <Separator className="my-2" />
               <Button variant="outline" className="w-full">Log in</Button>
-              <Button className="w-full">Start free trial</Button>
+              <Button className="w-full" onClick={() => router.push("/onboarding")}>Start free trial</Button>
             </nav>
           </div>
         )}
@@ -112,10 +114,10 @@ export default function LandingPage() {
           no coding needed.
         </p>
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button size="lg" className="w-full sm:w-auto">
+          <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/onboarding")}>
             Start Free 7-Day Trial <ArrowRight className="h-4 w-4" />
           </Button>
-          <Button variant="outline" size="lg" className="w-full sm:w-auto" >
+          <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
             <Link href="/templates">View Templates</Link>
           </Button>
         </div>
@@ -212,7 +214,7 @@ export default function LandingPage() {
             <CardContent>
               <p className="mb-4 font-display text-3xl font-semibold text-foreground">₹0</p>
               <p className="mb-6 text-sm text-muted-foreground">for 7 days</p>
-              <Button variant="outline" className="w-full">Start Free Trial</Button>
+              <Button variant="outline" className="w-full" onClick={() => router.push("/onboarding")}>Start Free Trial</Button>
             </CardContent>
           </Card>
           <Card className="border-primary/30 bg-primary/5 ring-1 ring-primary/20">
@@ -225,7 +227,7 @@ export default function LandingPage() {
                 ₹49<span className="text-base font-normal text-muted-foreground">/month</span>
               </p>
               <p className="mb-6 text-sm text-muted-foreground">Cancel anytime</p>
-              <Button className="w-full">Start Free Trial</Button>
+              <Button className="w-full" onClick={() => router.push("/onboarding")}>Start Free Trial</Button>
             </CardContent>
           </Card>
         </div>
@@ -240,7 +242,7 @@ export default function LandingPage() {
           <p className="mb-8 text-muted-foreground">
             Join salon owners already using SalonHost to grow their business.
           </p>
-          <Button size="lg">
+          <Button size="lg" onClick={() => router.push("/onboarding")}>
             Start Free Trial — ₹49/month after <ArrowRight className="h-4 w-4" />
           </Button>
         </div>

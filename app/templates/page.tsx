@@ -2,53 +2,50 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { getTemplates } from "@/lib/api";
-import { Scissors, Loader2, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { getTemplates, TemplateSummary } from "@/lib/api";
+import { Scissors, Loader2, AlertCircle } from "lucide-react";
 
 const LIMIT = 6;
 
 export default function TemplatesPage() {
-  const [templates, setTemplates] = useState([]);
+  const router = useRouter();
+  const [templates, setTemplates] = useState<TemplateSummary[]>([]);
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const observerRef = useRef(null);
-  const sentinelRef = useRef(null);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  const loadTemplates = useCallback(async (pageToLoad) => {
+  const loadTemplates = useCallback(async (pageToLoad: number) => {
     setLoading(true);
     setError(null);
     try {
       const res = await getTemplates({ page: pageToLoad, limit: LIMIT });
-      setTemplates((prev) =>
-        pageToLoad === 1 ? res.data : [...prev, ...res.data]
-      );
+      setTemplates((prev) => (pageToLoad === 1 ? res.data : [...prev, ...res.data]));
       setHasNextPage(res.pagination.hasNextPage);
     } catch (err) {
-      setError(err.message || "Failed to load templates");
+      setError(err instanceof Error ? err.message : "Failed to load templates");
     } finally {
       setLoading(false);
       setInitialLoading(false);
     }
   }, []);
 
-  // Initial load
   useEffect(() => {
     loadTemplates(1);
   }, [loadTemplates]);
 
-  // Infinite scroll observer (used on mobile card list)
   useEffect(() => {
     if (!sentinelRef.current || !hasNextPage) return;
 
-    observerRef.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !loading) {
           setPage((p) => {
@@ -61,33 +58,31 @@ export default function TemplatesPage() {
       { rootMargin: "200px" }
     );
 
-    observerRef.current.observe(sentinelRef.current);
-    return () => observerRef.current?.disconnect();
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
   }, [hasNextPage, loading, loadTemplates]);
 
-  const handleRetry = () => {
+  function handleRetry() {
     setError(null);
     loadTemplates(page === 1 ? 1 : page);
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <Scissors className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg font-semibold text-foreground">
-              SalonHost
-            </span>
+            <span className="font-display text-lg font-semibold text-foreground">SalonHost</span>
           </Link>
-          <Button size="sm">Start free trial</Button>
+          <Button size="sm" onClick={() => router.push("/onboarding")}>
+            Start free trial
+          </Button>
         </div>
       </header>
 
-      {/* Page heading */}
       <section className="mx-auto max-w-6xl px-4 pb-6 pt-12 md:px-6 md:pt-16">
         <Badge className="mb-4 border-primary/30 bg-primary/10 text-primary">
           {templates.length > 0 ? `${templates.length}+ designs` : "Loading designs"}
@@ -96,14 +91,13 @@ export default function TemplatesPage() {
           Find your salon&apos;s new look
         </h1>
         <p className="max-w-xl text-muted-foreground">
-          Every template is mobile-ready and fully customizable. Preview one,
-          pick your favorite, and go live today.
+          Every template is mobile-ready and fully customizable. Preview one, pick your favorite,
+          and go live today.
         </p>
       </section>
 
       <Separator className="mx-auto max-w-6xl" />
 
-      {/* Error state */}
       {error && templates.length === 0 && (
         <div className="mx-auto max-w-6xl px-4 py-16 text-center md:px-6">
           <AlertCircle className="mx-auto mb-3 h-8 w-8 text-primary" />
@@ -114,7 +108,6 @@ export default function TemplatesPage() {
         </div>
       )}
 
-      {/* Initial loading skeleton */}
       {initialLoading && (
         <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
           <div className="hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-3">
@@ -130,31 +123,28 @@ export default function TemplatesPage() {
         </div>
       )}
 
-      {/* Mobile: horizontal scrollable cards */}
       {!initialLoading && templates.length > 0 && (
         <div className="mx-auto max-w-6xl px-4 py-8 md:hidden">
           <div className="flex flex-col gap-4">
             {templates.map((t) => (
-              <MobileTemplateCard key={t.id} template={t} />
+              <MobileTemplateCard key={t.id} template={t} onUse={() => router.push("/onboarding")} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
         </div>
       )}
 
-      {/* Desktop: grid layout */}
       {!initialLoading && templates.length > 0 && (
         <div className="mx-auto hidden max-w-6xl px-4 py-8 md:block md:px-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {templates.map((t) => (
-              <DesktopTemplateCard key={t.id} template={t} />
+              <DesktopTemplateCard key={t.id} template={t} onUse={() => router.push("/onboarding")} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
         </div>
       )}
 
-      {/* Footer */}
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl items-center justify-center px-4 text-sm text-muted-foreground md:px-6">
           <p>© 2026 SalonHost. All rights reserved.</p>
@@ -164,7 +154,15 @@ export default function TemplatesPage() {
   );
 }
 
-function ScrollFooter({ loading, hasNextPage, sentinelRef }) {
+function ScrollFooter({
+  loading,
+  hasNextPage,
+  sentinelRef,
+}: {
+  loading: boolean;
+  hasNextPage: boolean;
+  sentinelRef: React.RefObject<HTMLDivElement>;
+}) {
   return (
     <div ref={sentinelRef} className="flex items-center justify-center py-10">
       {loading && (
@@ -180,17 +178,11 @@ function ScrollFooter({ loading, hasNextPage, sentinelRef }) {
   );
 }
 
-// Mobile card: left = name/tag, right = horizontally scrollable images
-function MobileTemplateCard({ template }) {
-  const scrollRef = useRef(null);
-
-  const scrollBy = (dir) => {
-    scrollRef.current?.scrollBy({ left: dir * 160, behavior: "smooth" });
-  };
+function MobileTemplateCard({ template, onUse }: { template: TemplateSummary; onUse: () => void }) {
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div className="flex overflow-hidden rounded-lg border border-border bg-card">
-      {/* Left section */}
       <div className="flex w-28 shrink-0 flex-col justify-between border-r border-border p-3">
         <div>
           <p className="font-display text-sm font-semibold leading-tight text-foreground">
@@ -200,12 +192,11 @@ function MobileTemplateCard({ template }) {
             {template.tag}
           </Badge>
         </div>
-        {template.is_premium && (
-          <span className="text-[10px] font-medium text-muted-foreground">Premium</span>
-        )}
+        <button onClick={onUse} className="text-left text-[10px] font-medium text-primary underline">
+          Use this
+        </button>
       </div>
 
-      {/* Right section: scrollable images */}
       <div className="relative flex-1">
         <div
           ref={scrollRef}
@@ -213,13 +204,7 @@ function MobileTemplateCard({ template }) {
         >
           {template.image_urls.map((url, i) => (
             <div key={i} className="relative h-28 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
-              <Image
-                src={url}
-                alt={`${template.name} preview ${i + 1}`}
-                fill
-                sizes="96px"
-                className="object-cover"
-              />
+              <Image src={url} alt={`${template.name} preview ${i + 1}`} fill sizes="96px" className="object-cover" />
             </div>
           ))}
         </div>
@@ -228,8 +213,7 @@ function MobileTemplateCard({ template }) {
   );
 }
 
-// Desktop card: image on top, details below, hover preview
-function DesktopTemplateCard({ template }) {
+function DesktopTemplateCard({ template, onUse }: { template: TemplateSummary; onUse: () => void }) {
   const [activeImg, setActiveImg] = useState(0);
 
   return (
@@ -243,20 +227,14 @@ function DesktopTemplateCard({ template }) {
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {template.is_premium && (
-          <Badge className="absolute right-3 top-3 border-none bg-foreground/80 text-background">
-            Premium
-          </Badge>
+          <Badge className="absolute right-3 top-3 border-none bg-foreground/80 text-background">Premium</Badge>
         )}
       </div>
 
       <div className="p-4">
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="font-display text-base font-semibold text-foreground">
-            {template.name}
-          </h3>
-          <Badge className="border-primary/30 bg-primary/10 text-xs text-primary">
-            {template.tag}
-          </Badge>
+          <h3 className="font-display text-base font-semibold text-foreground">{template.name}</h3>
+          <Badge className="border-primary/30 bg-primary/10 text-xs text-primary">{template.tag}</Badge>
         </div>
 
         {template.image_urls.length > 1 && (
@@ -266,16 +244,14 @@ function DesktopTemplateCard({ template }) {
                 key={i}
                 onClick={() => setActiveImg(i)}
                 aria-label={`Show image ${i + 1}`}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i === activeImg ? "bg-primary" : "bg-muted"
-                }`}
+                className={`h-1.5 flex-1 rounded-full transition-colors ${i === activeImg ? "bg-primary" : "bg-muted"}`}
               />
             ))}
           </div>
         )}
 
-        <Button variant="outline" size="sm" className="w-full">
-          Preview template
+        <Button variant="outline" size="sm" className="w-full" onClick={onUse}>
+          Use this template
         </Button>
       </div>
     </div>
