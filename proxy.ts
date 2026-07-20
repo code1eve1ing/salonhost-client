@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const host = request.headers.get("host") || "";
-  // Remove port
   const hostname = host.split(":")[0];
 
   let subdomain: string | null = null;
+
+  const appHost = new URL(process.env.APP_URL!).hostname;
 
   if (hostname.endsWith(".localhost")) {
     // salon.localhost
@@ -13,7 +14,15 @@ export function proxy(request: NextRequest) {
     if (parts.length > 1) {
       subdomain = parts[0];
     }
+  } else if (hostname.endsWith(".vercel.app")) {
+    // x-salon-client-v1.vercel.app
+    // salon-x-salon-client-v1.vercel.app
+
+    if (hostname !== appHost && hostname.endsWith(appHost)) {
+      subdomain = hostname.slice(0, -(appHost.length + 1));
+    }
   } else {
+    // Custom domain
     // salon.example.com
     const parts = hostname.split(".");
     if (parts.length > 2) {
