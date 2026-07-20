@@ -28,7 +28,6 @@ const SUBSCRIPTION_LABELS: Record<string, { label: string; tone: string }> = {
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
   const [copied, setCopied] = useState(false);
-
   if (!user) return null;
 
   const liveUrl = user.subdomain ? `https://${user.subdomain}.my-site.in` : null;

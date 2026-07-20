@@ -158,7 +158,7 @@ export default function TemplatesPage() {
   );
 }
 
-function ScrollFooter({
+export function ScrollFooter({
   loading,
   hasNextPage,
   sentinelRef,
@@ -182,7 +182,7 @@ function ScrollFooter({
   );
 }
 
-function MobileTemplateCard({ template, onUse }: { template: TemplateSummary; onUse: () => void }) {
+export function MobileTemplateCard({ template, onUse, isSelected=false }: { template: TemplateSummary; onUse: () => void; isSelected?:boolean }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   return (
@@ -196,9 +196,16 @@ function MobileTemplateCard({ template, onUse }: { template: TemplateSummary; on
             {template.tag}
           </Badge>
         </div>
-        <button onClick={onUse} className="text-left text-[10px] font-medium text-primary underline">
-          Use this
-        </button>
+        {
+          isSelected ? 
+          <Badge className="mt-2 border-secondary/30 bg-secondary/10 text-[12px] font-bold text-primary">
+            Selected
+          </Badge>
+          : <button onClick={onUse} className="text-left text-[10px] font-medium text-primary underline">
+            Use this
+          </button>
+        }
+        
       </div>
 
       <div className="relative flex-1">
@@ -217,7 +224,7 @@ function MobileTemplateCard({ template, onUse }: { template: TemplateSummary; on
   );
 }
 
-function DesktopTemplateCard({ template, onUse }: { template: TemplateSummary; onUse: () => void }) {
+export function DesktopTemplateCard({ template, onUse, isSelected=false }: { template: TemplateSummary; onUse: () => void; isSelected?:boolean }) {
   const [activeImg, setActiveImg] = useState(0);
 
   return (
@@ -254,9 +261,17 @@ function DesktopTemplateCard({ template, onUse }: { template: TemplateSummary; o
           </div>
         )}
 
-        <Button variant="outline" size="sm" className="w-full" onClick={onUse}>
-          Use this template
-        </Button>
+        {
+          isSelected ? 
+          <Badge className="mt-2 border-secondary/30 bg-secondary/10 text-md font-bold text-primary">
+            Selected
+          </Badge>
+          : <Button variant="outline" size="sm" className="w-full" onClick={onUse}>
+            Use this template
+          </Button>
+        }
+
+        
       </div>
     </div>
   );

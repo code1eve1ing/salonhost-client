@@ -5,12 +5,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Home, PenSquare, User, Menu, X, Scissors, ExternalLink } from "lucide-react";
+import { Loader2, Home, PenSquare, User, Menu, X, Scissors, ExternalLink, Layout } from "lucide-react";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 const NAV_ITEMS = [
   { icon: Home, label: "Dashboard", href: "/app" },
   { icon: PenSquare, label: "Edit Site", href: "/app/edit" },
+  { icon: Layout, label: "Templates", href: "/app/designs" },
   { icon: User, label: "Profile", href: "/app/profile" },
 ];
 

@@ -7,6 +7,7 @@ interface AuthState {
   user: User | null;
   setSession: (token: string, user: User) => void;
   setUser: (user: User) => void;
+  setTemplate: (templateId: string) => void;
   logout: () => void;
 }
 
@@ -19,6 +20,15 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       setSession: (token, user) => set({ token, user }),
       setUser: (user) => set({ user }),
+      setTemplate: (templateId) =>
+        set((state) => ({
+          user: state.user
+            ? {
+                ...state.user,
+                active_template: templateId,
+              }
+            : null,
+        })),
       logout: () => set({ token: null, user: null }),
     }),
     { name: "salon-auth" }

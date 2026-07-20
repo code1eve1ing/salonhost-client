@@ -107,6 +107,7 @@ export interface User extends SalonDetails {
   subscription: Subscription;
   onboarding_completed: boolean;
   createdAt: string;
+  active_template: string;
 }
 
 export const DEFAULT_SALON_DETAILS: SalonDetails = {

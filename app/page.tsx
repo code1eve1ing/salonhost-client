@@ -30,7 +30,8 @@ export default async function Home() {
     }
 
     const salon = await response.json();
-    return <BasicModel salon={salon.data} template_id="8" />;
+    const template_id = salon.data?.active_template || "1"
+    return <BasicModel salon={salon.data} template_id={template_id} />;
   } catch (error) {
     console.error(error);
 
