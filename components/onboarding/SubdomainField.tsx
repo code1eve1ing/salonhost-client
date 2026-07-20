@@ -20,6 +20,7 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
   const [status, setStatus] = useState<CheckState>("idle");
   const [reason, setReason] = useState<string | null>(null);
   const debouncedValue = useDebouncedValue(value, 500);
+  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   useEffect(() => {
     const normalized = debouncedValue.toLowerCase().trim();
@@ -78,7 +79,7 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           placeholder="your-salon-name"
           className="border-none focus-visible:ring-0"
         />
-        <span className="shrink-0 pr-3 text-sm text-muted-foreground">.my-site.in</span>
+        <span className="shrink-0 pr-3 text-sm text-muted-foreground">{postfix}</span>
       </div>
 
       <div className="mt-1.5 flex items-center gap-1.5 text-xs">

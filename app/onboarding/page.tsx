@@ -18,6 +18,7 @@ function OnboardingInner() {
 
   const { currentStepIndex, details, subdomain, setStepIndex, nextStep, prevStep, updateSection, setSubdomain } =
     useOnboardingStore();
+    const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   const [subdomainAvailable, setSubdomainAvailable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -111,7 +112,7 @@ function OnboardingInner() {
               onAvailabilityChange={setSubdomainAvailable}
             />
             <p className="text-sm text-muted-foreground">
-              This will be your salon&apos;s public link: <strong className="text-foreground">{subdomain || "your-salon-name"}.my-site.in</strong>
+              This will be your salon&apos;s public link: <strong className="text-foreground">{subdomain || "your-salon-name"}{postfix}</strong>
             </p>
           </div>
         )}

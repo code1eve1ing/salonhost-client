@@ -29,8 +29,8 @@ export default function DashboardPage() {
   const user = useAuthStore((s) => s.user);
   const [copied, setCopied] = useState(false);
   if (!user) return null;
-
-  const liveUrl = user.subdomain ? `https://${user.subdomain}.my-site.in` : null;
+  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
+  const liveUrl = user.subdomain ? `https://${user.subdomain}${postfix}` : null;
   const subStatus = SUBSCRIPTION_LABELS[user.subscription.effectiveStatus];
 
   function copyLink() {
@@ -67,7 +67,7 @@ export default function DashboardPage() {
             <div>
               <p className="text-xs text-muted-foreground">Your live site</p>
               <p className="font-display text-lg font-semibold text-foreground">
-                {user.subdomain ? `${user.subdomain}.my-site.in` : "No subdomain set"}
+                {user.subdomain ? `${user.subdomain}${postfix}` : "No subdomain set"}
               </p>
             </div>
           </div>

@@ -30,6 +30,7 @@ import {
 export default function LandingPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   return (
     <div className="min-h-screen bg-background">
@@ -147,7 +148,7 @@ export default function LandingPage() {
             {[
               { title: "Pick a template", desc: "Choose a design that matches your salon's vibe." },
               { title: "Customize", desc: "Add your logo, services, prices, and photos." },
-              { title: "Go live", desc: "Get your own link: yoursalon.my-site.in" },
+              { title: "Go live", desc: `Get your own link: yoursalon${postfix}` },
               { title: "Grow", desc: "Customers find you, message you, and book in." },
             ].map((item, i) => (
               <div key={item.title} className="text-center">
@@ -179,7 +180,7 @@ export default function LandingPage() {
             { icon: MessageCircle, title: "WhatsApp booking button", desc: "Customers message or call you directly." },
             { icon: ImageIcon, title: "Photo gallery", desc: "Show off your best work with a scrollable gallery." },
             { icon: MapPin, title: "Google Maps embed", desc: "Help customers find your salon easily." },
-            { icon: Globe, title: "Your own subdomain", desc: "salonname.my-site.in — yours to share anywhere." },
+            { icon: Globe, title: "Your own subdomain", desc: `salonname${postfix} — yours to share anywhere.` },
             { icon: Sparkles, title: "Service menu & pricing", desc: "Display your services and prices clearly." },
           ].map((f) => (
             <Card key={f.title} className="border-border/60">

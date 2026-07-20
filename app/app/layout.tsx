@@ -35,6 +35,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return pathname.startsWith(href);
   };
 
+  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -95,7 +97,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <>
               <Separator className="my-3" />
               <a
-                href={`https://${user.subdomain}.my-site.in`}
+                href={`https://${user.subdomain}${postfix}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -121,7 +123,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium text-foreground">{user?.name}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {user?.subdomain ? `${user.subdomain}.my-site.in` : "No subdomain yet"}
+                {user?.subdomain ? `${user.subdomain}${postfix}` : "No subdomain yet"}
               </p>
             </div>
           </Link>
