@@ -77,7 +77,7 @@ export default function DashboardPage() {
               {copied ? <CheckCircle2 className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? "Copied" : "Copy link"}
             </Button>
-            <Button size="sm" asChild disabled={!liveUrl}>
+            <Button size="sm" disabled={!liveUrl}>
               <a href={liveUrl || "#"} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-3.5 w-3.5" /> Visit
               </a>
@@ -103,7 +103,7 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
-          <Button variant="outline" size="sm" asChild>
+          <Button variant="outline" size="sm">
             <Link href="/app/profile">Manage subscription</Link>
           </Button>
         </CardContent>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:grid-cols-2">
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 py-4" asChild>
+            <Button variant="outline" className="h-auto flex-col items-start gap-1 py-4">
               <Link href="/app/edit">
                 <span className="text-sm font-medium">Edit your site</span>
                 <span className="text-xs font-normal text-muted-foreground">
@@ -144,7 +144,7 @@ export default function DashboardPage() {
                 </span>
               </Link>
             </Button>
-            <Button variant="outline" className="h-auto flex-col items-start gap-1 py-4" asChild>
+            <Button variant="outline" className="h-auto flex-col items-start gap-1 py-4">
               <Link href="/app/profile">
                 <span className="text-sm font-medium">Change subdomain</span>
                 <span className="text-xs font-normal text-muted-foreground">

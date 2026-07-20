@@ -165,7 +165,7 @@ function ScrollFooter({
 }: {
   loading: boolean;
   hasNextPage: boolean;
-  sentinelRef: React.RefObject<HTMLDivElement>;
+  sentinelRef: React.RefObject<HTMLDivElement | null>;
 }) {
   return (
     <div ref={sentinelRef} className="flex items-center justify-center py-10">
