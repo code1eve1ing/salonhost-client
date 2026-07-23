@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import LandingPage from "@/components/initial/LandingPage";
 import { notFound } from "next/navigation";
-import BasicModel from "@/components/models/basic";
+import TemplateRenderer from "@/components/public/TemplateRenderer";
 
 export default async function Home() {
   const headerList = await headers();
@@ -30,8 +30,8 @@ export default async function Home() {
     }
 
     const salon = await response.json();
-    const template_id = salon.data?.active_template || "1"
-    return <BasicModel salon={salon.data} template_id={template_id} />;
+    const {html, css, js} = salon.data;
+    return <TemplateRenderer html={html} css={css} js={js} />;
   } catch (error) {
     console.error(error);
 
