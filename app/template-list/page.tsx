@@ -77,22 +77,21 @@ export default function TemplatesPage() {
             </div>
             <span className="font-display text-lg font-semibold text-foreground">SalonHost</span>
           </Link>
-          <Button size="sm" onClick={() => router.push("/onboarding")}>
+          {/* <Button size="sm" onClick={() => router.push("/onboarding")}>
             Start free trial
-          </Button>
+          </Button> */}
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 pb-6 pt-12 md:px-6 md:pt-16">
-        <Badge className="mb-4 border-primary/30 bg-primary/10 text-primary">
+      <section className="mx-auto max-w-6xl px-4 pb-6 pt-6 md:px-6 md:pt-12">
+        {/* <Badge className="mb-4 border-primary/30 bg-primary/10 text-primary">
           {templates.length > 0 ? `${templates.length}+ designs` : "Loading designs"}
-        </Badge>
+        </Badge> */}
         <h1 className="mb-3 font-display text-3xl font-semibold text-foreground md:text-5xl">
-          Find your salon&apos;s new look
+          Select Template for <br/>  <span className="text-primary">Your WebSite</span>
         </h1>
         <p className="max-w-xl text-muted-foreground">
-          Every template is mobile-ready and fully customizable. Preview one, pick your favorite,
-          and go live today.
+          Every template is mobile-ready and fully customizable.
         </p>
       </section>
 
@@ -124,19 +123,24 @@ export default function TemplatesPage() {
       )}
 
       {!initialLoading && templates.length > 0 && (
-        <div className="mx-auto max-w-6xl px-4 py-8 md:hidden">
-          <div className="flex flex-col gap-4">
+        <div className="mx-auto max-w-6xl px-4 py-8 ">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {templates.map((t) => (
-              <MobileTemplateCard key={t.id} template={t} onUse={() => {
+              <TemplateCard 
+              key={t.id} 
+              template={t} 
+              onPreview={() => { }} 
+              onUse={() => {
                 localStorage.setItem('template_to_sync', t.id)
-                router.push("/onboarding")}} />
+                router.push("/onboarding")
+              }} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
         </div>
       )}
 
-      {!initialLoading && templates.length > 0 && (
+      {/* {!initialLoading && templates.length > 0 && (
         <div className="mx-auto hidden max-w-6xl px-4 py-8 md:block md:px-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {templates.map((t) => (
@@ -147,14 +151,14 @@ export default function TemplatesPage() {
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
         </div>
-      )}
+      )} */}
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl items-center justify-center px-4 text-sm text-muted-foreground md:px-6">
           <p>@ 2026 SalonHost.
             {/* All rights reserved. */}
 
-            </p>
+          </p>
         </div>
       </footer>
     </div>
@@ -184,50 +188,83 @@ export function ScrollFooter({
     </div>
   );
 }
+interface TemplateCardProps {
+  template: TemplateSummary;
+  onUse: () => void;
+  onPreview: () => void;
+  isSelected?: boolean;
+}
 
-export function MobileTemplateCard({ template, onUse, isSelected=false }: { template: TemplateSummary; onUse: () => void; isSelected?:boolean }) {
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+export function TemplateCard({ template, onUse, onPreview, isSelected = false }: TemplateCardProps) {
+  const tags = template.tag
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
 
   return (
-    <div className="flex overflow-hidden rounded-lg border border-border bg-card">
-      <div className="flex w-28 shrink-0 flex-col justify-between border-r border-border p-3">
-        <div>
-          <p className="font-display text-sm font-semibold leading-tight text-foreground">
-            {template.name}
-          </p>
-          <Badge className="mt-2 border-primary/30 bg-primary/10 text-[10px] text-primary">
-            {template.tag}
-          </Badge>
+    <div className="flex h-full flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md">
+      {/* Header */}
+      <div className="space-y-3 border-b p-4">
+        <h3 className="text-center font-display text-lg font-semibold leading-tight">
+          {template.name}
+        </h3>
+
+        <div className="flex justify-center gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {tags.map((tag) => (
+            <Badge
+              key={tag}
+              variant="secondary"
+              className="shrink-0 whitespace-nowrap"
+            >
+              {tag}
+            </Badge>
+          ))}
         </div>
-        {
-          isSelected ? 
-          <Badge className="mt-2 border-secondary/30 bg-secondary/10 text-[12px] font-bold text-primary">
-            Selected
-          </Badge>
-          : <button onClick={onUse} className="text-left text-[10px] font-medium text-primary underline">
-            Use this
-          </button>
-        }
-        
       </div>
 
-      <div className="relative flex-1">
-        <div
-          ref={scrollRef}
-          className="flex gap-2 overflow-x-auto p-2 scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {template.image_urls.map((url, i) => (
-            <div key={i} className="relative h-28 w-24 shrink-0 overflow-hidden rounded-md bg-muted">
-              <Image src={url} alt={`${template.name} preview ${i + 1}`} fill sizes="96px" className="object-cover" />
+      {/* Images */}
+      <div className="flex-1 p-4">
+        <div className="flex gap-3 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {template.image_urls.map((url, index) => (
+            <div
+              key={index}
+              className="relative h-52 shrink-0 overflow-hidden rounded-lg border bg-muted"
+            >
+              <Image
+                src={url}
+                alt={`${template.name} ${index + 1}`}
+                width={1000}
+                height={1000}
+                className="h-full w-auto object-contain"
+              />
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="flex gap-2 border-t p-4">
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={onPreview}
+        >
+          Preview
+        </Button>
+
+        <Button
+          className="flex-1"
+          disabled={isSelected}
+          onClick={onUse}
+        >
+          {isSelected ? "Selected" : "Select Template"}
+        </Button>
       </div>
     </div>
   );
 }
 
-export function DesktopTemplateCard({ template, onUse, isSelected=false }: { template: TemplateSummary; onUse: () => void; isSelected?:boolean }) {
+export function DesktopTemplateCard({ template, onUse, isSelected = false }: { template: TemplateSummary; onUse: () => void; isSelected?: boolean }) {
   const [activeImg, setActiveImg] = useState(0);
 
   return (
@@ -265,16 +302,16 @@ export function DesktopTemplateCard({ template, onUse, isSelected=false }: { tem
         )}
 
         {
-          isSelected ? 
-          <Badge className="mt-2 border-secondary/30 bg-secondary/10 text-md font-bold text-primary">
-            Selected
-          </Badge>
-          : <Button variant="outline" size="sm" className="w-full" onClick={onUse}>
-            Use this template
-          </Button>
+          isSelected ?
+            <Badge className="mt-2 border-secondary/30 bg-secondary/10 text-md font-bold text-primary">
+              Selected
+            </Badge>
+            : <Button variant="outline" size="sm" className="w-full" onClick={onUse}>
+              Use this template
+            </Button>
         }
 
-        
+
       </div>
     </div>
   );

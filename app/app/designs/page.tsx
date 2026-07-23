@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getTemplates, TemplateSummary, updateTemplate } from "@/lib/api";
 import { Scissors, Loader2, AlertCircle } from "lucide-react";
-import { DesktopTemplateCard, MobileTemplateCard, ScrollFooter } from "@/app/templates/page";
+import { DesktopTemplateCard, TemplateCard, ScrollFooter } from "@/app/template-list/page";
 import { useAuthStore } from "@/store/authStore";
 
 const LIMIT = 6;
@@ -113,7 +113,8 @@ export default function TemplatesPage() {
                     <div className="mx-auto max-w-6xl px-4 py-8 md:hidden">
                         <div className="flex flex-col gap-4">
                             {templates.map((t) => (
-                                <MobileTemplateCard 
+                                <TemplateCard 
+                                onPreview={()=>{}}
                                 isSelected={t.id === user?.active_template}
                                 key={t.id} template={t} onUse={() => {
                                     handleUse(t.id)

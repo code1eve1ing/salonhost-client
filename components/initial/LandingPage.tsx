@@ -53,7 +53,7 @@ export default function LandingPage() {
             <a href="#how-it-works" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               How it works
             </a>
-            <Link href="/templates" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            <Link href="/template-list" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               Templates
             </Link>
             <a href="#pricing" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
@@ -103,7 +103,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:px-6 md:py-32">
         <Badge className="mb-6 border-primary/30 bg-primary/10 text-primary">
-          <Sparkles className="mr-1 h-3 w-3" /> 7-day free trial &middot; ₹49/month after
+          <Sparkles className="mr-1 h-3 w-3" /> Free & Premium Templates  
         </Badge>
         <h1 className="mx-auto mb-6 max-w-3xl font-display text-4xl font-semibold tracking-tight text-foreground md:text-6xl leading-[1.1]">
           Get Your Salon Online in{" "}
@@ -116,15 +116,15 @@ export default function LandingPage() {
         </p>
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/onboarding")}>
-            Start Free 7-Day Trial <ArrowRight className="h-4 w-4" />
+            Get your Custom Website <ArrowRight className="h-4 w-4" />
           </Button>
           <Button variant="outline" size="lg" className="w-full sm:w-auto">
-            <Link href="/templates">View Templates</Link>
+            <Link href="/template-list">View Templates</Link>
           </Button>
         </div>
 
         <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-          {["No credit card required", "Cancel anytime", "Live in minutes"].map((item) => (
+          {["0₹ for Free Templates","Live in minutes", "Premium Templates starting from 49₹/month"].map((item) => (
             <span key={item} className="flex items-center gap-1.5">
               <CheckCircle className="h-4 w-4 text-primary" />
               {item}
