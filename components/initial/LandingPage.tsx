@@ -258,7 +258,9 @@ export default function LandingPage() {
             </div>
             <span className="font-semibold text-foreground">SalonHost</span>
           </div>
-          <p>© 2026 SalonHost. All rights reserved.</p>
+          <p>@ 2026 SalonHost. 
+            {/* All rights reserved. */}
+            </p>
           <div className="flex gap-4">
             <a href="#" className="transition-colors hover:text-foreground">Privacy</a>
             <a href="#" className="transition-colors hover:text-foreground">Terms</a>

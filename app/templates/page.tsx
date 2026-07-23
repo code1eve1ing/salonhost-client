@@ -151,7 +151,10 @@ export default function TemplatesPage() {
 
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl items-center justify-center px-4 text-sm text-muted-foreground md:px-6">
-          <p>© 2026 SalonHost. All rights reserved.</p>
+          <p>@ 2026 SalonHost.
+            {/* All rights reserved. */}
+
+            </p>
         </div>
       </footer>
     </div>
