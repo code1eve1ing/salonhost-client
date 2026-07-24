@@ -72,7 +72,7 @@ export default function TemplatesPage() {
         loadTemplates(page === 1 ? 1 : page);
     }
 
-    async function handleUse(templateId: string){
+    async function handleUse(templateId: string) {
         // Optimistic Update, TODO: maybe later change with proper loading
         setTemplate(templateId)
         await updateTemplate(templateId)
@@ -80,14 +80,14 @@ export default function TemplatesPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6">
+            <div className="mx-auto  space-y-6 p-4 md:p-6">
                 <div>
                     <h1 className="font-display text-2xl font-semibold text-foreground">Templates</h1>
                     <p className="mt-0.5 text-sm text-muted-foreground">Select mobile-ready and fully customizable template for your personal site</p>
                 </div>
 
                 {error && templates.length === 0 && (
-                    <div className="mx-auto max-w-6xl px-4 py-16 text-center md:px-6">
+                    <div className="mx-auto px-4 py-16 text-center md:px-6">
                         <AlertCircle className="mx-auto mb-3 h-8 w-8 text-primary" />
                         <p className="mb-4 text-muted-foreground">{error}</p>
                         <Button variant="outline" onClick={handleRetry}>
@@ -96,7 +96,7 @@ export default function TemplatesPage() {
                     </div>
                 )}
                 {initialLoading && (
-                    <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+                    <div className="mx-auto px-4 py-10 md:px-6">
                         <div className="hidden gap-6 md:grid md:grid-cols-2 lg:grid-cols-3">
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <div key={i} className="h-72 animate-pulse rounded-lg bg-muted" />
@@ -110,29 +110,18 @@ export default function TemplatesPage() {
                     </div>
                 )}
                 {!initialLoading && templates.length > 0 && (
-                    <div className="mx-auto max-w-6xl px-4 py-8 md:hidden">
-                        <div className="flex flex-col gap-4">
+                    <div className="mx-auto max-w-6xl px-4 py-8 ">
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                             {templates.map((t) => (
-                                <TemplateCard 
-                                onPreview={()=>{}}
-                                isSelected={t.id === user?.active_template}
-                                key={t.id} template={t} onUse={() => {
-                                    handleUse(t.id)
-                                }} />
-                            ))}
-                        </div>
-                        <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
-                    </div>
-                )}
-                {!initialLoading && templates.length > 0 && (
-                    <div className="mx-auto hidden max-w-6xl px-4 py-8 md:block md:px-6">
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {templates.map((t) => (
-                                <DesktopTemplateCard 
-                                isSelected={t.id === user?.active_template}
-                                key={t.id} template={t} onUse={() => {
-                                    handleUse(t.id)
-                                }} />
+                                <TemplateCard
+                                    key={t.id}
+                                    template={t}
+                                    isSelected={t.id === user?.active_template}
+                                    onPreview={() => { }}
+                                    onUse={() => {
+                                        handleUse(t.id)
+
+                                    }} />
                             ))}
                         </div>
                         <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />

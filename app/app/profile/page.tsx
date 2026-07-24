@@ -100,12 +100,6 @@ export default function ProfilePage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Subscription management - 4 distinct states */}
-      <div>
-        <h2 className="mb-3 font-display text-lg font-semibold text-foreground">Subscription</h2>
-        <SubscriptionCard subscription={user.subscription} onUpdated={handleSubscriptionUpdate} />
-      </div>
     </div>
   );
 }
