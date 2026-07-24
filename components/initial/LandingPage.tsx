@@ -26,14 +26,23 @@ import {
   X,
   Scissors,
 } from "lucide-react";
+import RedirectHandlerForAuthenticatedUser from "../public/RedirectHandlerForAuthenticatedUser";
 
 export default function LandingPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
+  const scrollTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <RedirectHandlerForAuthenticatedUser />
       {/* Navbar */}
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
@@ -47,11 +56,12 @@ export default function LandingPage() {
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            <a href="#features" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Features
-            </a>
-            <a href="#how-it-works" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            <a onClick={() => scrollTo("how-it-works")}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               How it works
+            </a>
+            <a onClick={() => scrollTo("features")} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              Features
             </a>
             <Link href="/template-list" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               Templates
@@ -65,7 +75,7 @@ export default function LandingPage() {
             <Button variant="ghost" size="sm">
               Log in
             </Button>
-            <Button size="sm" onClick={() => router.push("/onboarding")}>Start free trial</Button>
+            <Button size="sm" onClick={() => router.push("/template-list")}>Start for Free</Button>
           </div>
 
           <button
@@ -94,7 +104,7 @@ export default function LandingPage() {
               </a>
               <Separator className="my-2" />
               <Button variant="outline" className="w-full">Log in</Button>
-              <Button className="w-full" onClick={() => router.push("/onboarding")}>Start free trial</Button>
+              <Button className="w-full" onClick={() => router.push("/template-list")}>Start for Free</Button>
             </nav>
           </div>
         )}
@@ -103,7 +113,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:px-6 md:py-32">
         <Badge className="mb-6 border-primary/30 bg-primary/10 text-primary">
-          <Sparkles className="mr-1 h-3 w-3" /> Free & Premium Templates  
+          <Sparkles className="mr-1 h-3 w-3" /> Free & Premium Templates
         </Badge>
         <h1 className="mx-auto mb-6 max-w-3xl font-display text-4xl font-semibold tracking-tight text-foreground md:text-6xl leading-[1.1]">
           Get Your Salon Online in{" "}
@@ -115,8 +125,8 @@ export default function LandingPage() {
           no coding needed.
         </p>
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/onboarding")}>
-            Get your Custom Website <ArrowRight className="h-4 w-4" />
+          <Button size="lg" className="w-full sm:w-auto" onClick={() => router.push("/template-list")}>
+            Get your FREE Custom Website <ArrowRight className="h-4 w-4" />
           </Button>
           <Button variant="outline" size="lg" className="w-full sm:w-auto">
             <Link href="/template-list">View Templates</Link>
@@ -124,7 +134,7 @@ export default function LandingPage() {
         </div>
 
         <div className="mt-14 flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
-          {["0₹ for Free Templates","Live in minutes", "Premium Templates starting from 49₹/month"].map((item) => (
+          {["0₹ for Free Templates", "Live in Minutes", "Premium Templates starting from 49₹/month"].map((item) => (
             <span key={item} className="flex items-center gap-1.5">
               <CheckCircle className="h-4 w-4 text-primary" />
               {item}
@@ -146,9 +156,9 @@ export default function LandingPage() {
           </div>
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Pick a template", desc: "Choose a design that matches your salon's vibe." },
-              { title: "Customize", desc: "Add your logo, services, prices, and photos." },
-              { title: "Go live", desc: `Get your own link: yoursalon${postfix}` },
+              { title: "Pick a Template", desc: "Choose a design that matches your salon's vibe." },
+              { title: "Select Subdomain", desc: `Get your own link: yoursalon${postfix}` },
+              { title: "Go Live", desc: `Now, your website is Ready!!!` },
               { title: "Grow", desc: "Customers find you, message you, and book in." },
             ].map((item, i) => (
               <div key={item.title} className="text-center">
@@ -177,10 +187,10 @@ export default function LandingPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { icon: Smartphone, title: "Mobile-friendly", desc: "Looks sharp on any phone, tablet, or laptop." },
-            { icon: MessageCircle, title: "WhatsApp booking button", desc: "Customers message or call you directly." },
+            // { icon: MessageCircle, title: "WhatsApp booking button", desc: "Customers message or call you directly." },
+            { icon: Globe, title: "Your own subdomain", desc: `salonname${postfix} — yours to share anywhere.` },
             { icon: ImageIcon, title: "Photo gallery", desc: "Show off your best work with a scrollable gallery." },
             { icon: MapPin, title: "Google Maps embed", desc: "Help customers find your salon easily." },
-            { icon: Globe, title: "Your own subdomain", desc: `salonname${postfix} — yours to share anywhere.` },
             { icon: Sparkles, title: "Service menu & pricing", desc: "Display your services and prices clearly." },
           ].map((f) => (
             <Card key={f.title} className="border-border/60">
@@ -199,7 +209,7 @@ export default function LandingPage() {
       <Separator />
 
       {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-6xl px-4 py-20 md:px-6">
+      {/* <section id="pricing" className="mx-auto max-w-6xl px-4 py-20 md:px-6">
         <div className="mb-12 text-center">
           <h2 className="mb-3 font-display text-3xl font-semibold text-foreground">
             Simple, honest pricing
@@ -232,7 +242,7 @@ export default function LandingPage() {
             </CardContent>
           </Card>
         </div>
-      </section>
+      </section> */}
 
       {/* Final CTA */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:px-6">
@@ -243,8 +253,8 @@ export default function LandingPage() {
           <p className="mb-8 text-muted-foreground">
             Join salon owners already using SalonHost to grow their business.
           </p>
-          <Button size="lg" onClick={() => router.push("/onboarding")}>
-            Start Free Trial — ₹49/month after <ArrowRight className="h-4 w-4" />
+          <Button size="lg" onClick={() => router.push("/template-list")}>
+            Start for Free<ArrowRight className="h-4 w-4" />
           </Button>
         </div>
       </section>
@@ -258,13 +268,13 @@ export default function LandingPage() {
             </div>
             <span className="font-semibold text-foreground">SalonHost</span>
           </div>
-          <p>@ 2026 SalonHost. 
+          <p>@ 2026 SalonHost.
             {/* All rights reserved. */}
-            </p>
-          <div className="flex gap-4">
+          </p>
+          {/* <div className="flex gap-4">
             <a href="#" className="transition-colors hover:text-foreground">Privacy</a>
             <a href="#" className="transition-colors hover:text-foreground">Terms</a>
-          </div>
+          </div> */}
         </div>
       </footer>
     </div>
