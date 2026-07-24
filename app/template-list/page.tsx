@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getTemplates, TemplateSummary } from "@/lib/api";
 import { Scissors, Loader2, AlertCircle } from "lucide-react";
+import RedirectHandlerForAuthenticatedUser from "@/components/public/RedirectHandlerForAuthenticatedUser";
 
 const LIMIT = 6;
 
@@ -69,6 +70,7 @@ export default function TemplatesPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <RedirectHandlerForAuthenticatedUser/>
       <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <Link href="/" className="flex items-center gap-2">

@@ -11,6 +11,7 @@ import { SubdomainField } from "@/components/onboarding/SubdomainField";
 import { ArrowLeft, ArrowRight, Loader2, Scissors, AlertCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
+import RedirectHandlerForAuthenticatedUser from "@/components/public/RedirectHandlerForAuthenticatedUser";
 
 const TOTAL_STEPS = ONBOARDING_STEPS.length + 1; // +1 for the final subdomain step
 
@@ -53,6 +54,7 @@ function OnboardingInner() {
 
     return (
         <div className="min-h-screen bg-background">
+            <RedirectHandlerForAuthenticatedUser/>
             <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
                 <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
                     <Link href="/" className="flex items-center gap-2">

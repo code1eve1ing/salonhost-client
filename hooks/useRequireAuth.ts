@@ -28,7 +28,7 @@ export function useRequireAuth() {
       .catch((e) => {
         if (!cancelled) {
           logout();
-          router.replace("/onboarding");
+          router.replace("/");
         }
       });
 
