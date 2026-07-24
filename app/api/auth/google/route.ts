@@ -15,7 +15,6 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const redirectUri = process.env.GOOGLE_REDIRECT_URI; // e.g. http://localhost:3000/api/auth/google/callback
-
   if (!clientId || !redirectUri) {
     return NextResponse.json(
       { success: false, message: "Google OAuth is not configured" },

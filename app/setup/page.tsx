@@ -27,11 +27,8 @@ function OnboardingInner() {
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
-    const isLastStep = true;
 
     async function handleContinue() {
-
-
         // Final step: stash the draft in a cookie, then hand off to Google OAuth.
         setSubmitting(true);
         setSubmitError(null);
@@ -71,7 +68,7 @@ function OnboardingInner() {
             {/* Hero */}
             <section className="mx-auto max-w-6xl px-4 pb-6 pt-6 md:px-6 md:pt-12">
                 <h1 className="mb-3 font-display text-3xl font-semibold text-foreground md:text-5xl">
-                    Choose a Link for
+                    Create a Link for
                     <br />
                     <span className="text-primary">Your Website</span>
                 </h1>

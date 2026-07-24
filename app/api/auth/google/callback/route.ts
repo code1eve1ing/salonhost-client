@@ -115,6 +115,7 @@ export async function GET(req: NextRequest) {
     return response;
   } catch (err) {
     console.error("[oauth callback] error:", err);
-    return NextResponse.redirect(`${appUrl}/onboarding?error=oauth_failed`);
+    // TODO: manage for login also
+    return NextResponse.redirect(`${appUrl}/template-list?error=oauth_failed`);
   }
 }

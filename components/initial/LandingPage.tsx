@@ -72,7 +72,7 @@ export default function LandingPage() {
           </nav>
 
           <div className="hidden items-center gap-2 md:flex">
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
               Log in
             </Button>
             <Button size="sm" onClick={() => router.push("/template-list")}>Start for Free</Button>
@@ -103,7 +103,7 @@ export default function LandingPage() {
                 Pricing
               </a>
               <Separator className="my-2" />
-              <Button variant="outline" className="w-full">Log in</Button>
+              <Button variant="outline" onClick={() => router.push("/login")} className="w-full">Log in</Button>
               <Button className="w-full" onClick={() => router.push("/template-list")}>Start for Free</Button>
             </nav>
           </div>
