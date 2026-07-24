@@ -77,16 +77,10 @@ export default function TemplatesPage() {
             </div>
             <span className="font-display text-lg font-semibold text-foreground">SalonHost</span>
           </Link>
-          {/* <Button size="sm" onClick={() => router.push("/onboarding")}>
-            Start free trial
-          </Button> */}
         </div>
       </header>
 
       <section className="mx-auto max-w-6xl px-4 pb-6 pt-6 md:px-6 md:pt-12">
-        {/* <Badge className="mb-4 border-primary/30 bg-primary/10 text-primary">
-          {templates.length > 0 ? `${templates.length}+ designs` : "Loading designs"}
-        </Badge> */}
         <h1 className="mb-3 font-display text-3xl font-semibold text-foreground md:text-5xl">
           Select Template for <br/>  <span className="text-primary">Your WebSite</span>
         </h1>
@@ -132,32 +126,17 @@ export default function TemplatesPage() {
               onPreview={() => { }} 
               onUse={() => {
                 localStorage.setItem('template_to_sync', t.id)
-                router.push("/onboarding")
+                router.push("/setup")
               }} />
             ))}
           </div>
           <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
         </div>
       )}
-
-      {/* {!initialLoading && templates.length > 0 && (
-        <div className="mx-auto hidden max-w-6xl px-4 py-8 md:block md:px-6">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {templates.map((t) => (
-              <DesktopTemplateCard key={t.id} template={t} onUse={() => {
-                localStorage.setItem('template_to_sync', t.id)
-                router.push("/onboarding")}} />
-            ))}
-          </div>
-          <ScrollFooter loading={loading} hasNextPage={hasNextPage} sentinelRef={sentinelRef} />
-        </div>
-      )} */}
-
       <footer className="border-t border-border py-8">
         <div className="mx-auto flex max-w-6xl items-center justify-center px-4 text-sm text-muted-foreground md:px-6">
           <p>@ 2026 SalonHost.
             {/* All rights reserved. */}
-
           </p>
         </div>
       </footer>

@@ -30,7 +30,7 @@ export default async function Home() {
     }
 
     const salon = await response.json();
-    const {html, css, js} = salon.data;
+    const { html, css, js } = salon.data;
     return <TemplateRenderer html={html} css={css} js={js} />;
   } catch (error) {
     console.error(error);

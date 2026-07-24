@@ -10,13 +10,28 @@ export default function TemplateRenderer({
   css,
   js
 }: TemplateRendererProps) {
+
+  // TODO: only use for premium templates
+  const premiumTemplateCss = `
+  #template-wrapper{
+    background: var(--bg);
+    opacity: 1;
+    transition: opacity .25s ease;
+  }
+  #template-wrapper.hide{
+    opacity: 0;
+    pointer-events: none;
+  }
+  `
+
   return <>
-    <style dangerouslySetInnerHTML={{ __html: css }} />
+    <style dangerouslySetInnerHTML={{ __html: css + premiumTemplateCss }} />
+    <div id="template-wrapper" className="absolute min-h-screen inset-0 z-9999"></div>
     <div
       dangerouslySetInnerHTML={{
         __html: html,
       }}
     />
-    <Script js={js}/>
+    <Script js={js} />
   </>
 }
