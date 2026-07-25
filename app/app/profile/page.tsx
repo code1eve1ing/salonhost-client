@@ -6,10 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { SubdomainField } from "@/components/onboarding/SubdomainField";
-import { SubscriptionCard } from "@/components/dashboard/SubscriptionCard";
 import { updateSubdomain } from "@/lib/api";
 import { Subscription } from "@/types/salon";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2, Globe, User } from "lucide-react";
 
 function getInitials(name: string): string {
   if (!name) return "SH";
@@ -43,29 +42,46 @@ export default function ProfilePage() {
     }
   }
 
+  function handleCancelSubdomain() {
+    setNewSubdomain(user!.subdomain || "");
+    setError(null);
+  }
+
   function handleSubscriptionUpdate(sub: Subscription) {
     setUser({ ...user!, subscription: sub });
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6">
+    <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6 pb-16">
       <div>
         <h1 className="font-display text-2xl font-semibold text-foreground">Profile</h1>
-        <p className="mt-0.5 text-sm text-muted-foreground">Manage your account and subscription.</p>
+        <p className="mt-0.5 text-sm text-muted-foreground">
+          Manage your account and subscription.
+        </p>
       </div>
 
       {/* Account info */}
       <Card>
-        <CardContent className="flex items-center gap-4 pt-6">
-          <Avatar className="h-14 w-14">
+        <CardHeader className="pb-0">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <User className="h-4 w-4 text-muted-foreground" />
+            Account
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center gap-4 pt-4">
+          <Avatar className="h-14 w-14 shrink-0">
             <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
               {getInitials(user.name)}
             </AvatarFallback>
           </Avatar>
-          <div>
-            <p className="font-display text-lg font-semibold text-foreground">{user.name}</p>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground">Account ID: {user.counter}</p>
+          <div className="min-w-0">
+            <p className="truncate font-display text-lg font-semibold text-foreground">
+              {user.name}
+            </p>
+            <p className="truncate text-sm text-muted-foreground">{user.email}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Account ID: {user.counter}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -73,27 +89,51 @@ export default function ProfilePage() {
       {/* Subdomain */}
       <Card>
         <CardHeader>
-          <CardTitle>Your subdomain</CardTitle>
-          <CardDescription>Change the link customers use to find your salon.</CardDescription>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Globe className="h-4 w-4 text-muted-foreground" />
+            Your subdomain
+          </CardTitle>
+          <CardDescription>
+            Change the link customers use to find your salon.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <SubdomainField
             value={newSubdomain}
-            onChange={setNewSubdomain}
+            onChange={(val) => {
+              setNewSubdomain(val);
+              if (error) setError(null);
+            }}
             onAvailabilityChange={setSubdomainAvailable}
             userDomain={user?.subdomain}
           />
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          <div className="flex items-center gap-3">
+
+          {error && (
+            <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center gap-3 pt-1">
             <Button
               onClick={handleSaveSubdomain}
               disabled={saving || isUnchanged || !subdomainAvailable}
             >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-              Save subdomain
+              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+              {saving ? "Saving..." : "Save subdomain"}
             </Button>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleCancelSubdomain}
+              disabled={saving || isUnchanged}
+            >
+              Cancel
+            </Button>
+
             {saved && (
-              <span className="flex items-center gap-1.5 text-sm text-success">
+              <span className="flex items-center gap-1.5 text-sm font-medium text-success">
                 <CheckCircle2 className="h-4 w-4" /> Updated
               </span>
             )}
