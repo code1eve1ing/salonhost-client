@@ -80,25 +80,61 @@ export default function DashboardPage() {
 
       {/* Live link card */}
       <Card className="border-primary/20 bg-primary/5">
-        <CardContent className="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-end sm:items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15">
-              <Globe className="h-5 w-5 text-primary" />
+        <CardContent className="flex flex-col gap-5 p-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex  h-11 min-w-11 items-center justify-center rounded-xl bg-primary/10">
+                <Globe className="h-5 w-5 text-primary" />
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium">Your website is live</p>
+
+                </div>
+
+                <p className="text-sm text-muted-foreground">
+                  Share this link with customers or add it to your Google Business
+                  profile.
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground">Your live site</p>
+
+            <div className="rounded-lg border bg-muted/40 px-4 py-3">
+              <p className="truncate font-mono text-base font-semibold text-primary">
+                {user.subdomain
+                  ? `${user.subdomain}${postfix}`
+                  : "No subdomain configured"}
+              </p>
+            </div>
           </div>
-          <p className="truncate font-display text-lg font-semibold text-foreground">
-            {user.subdomain ? `${user.subdomain}${postfix}` : "No subdomain set"}
-          </p>
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0">
-            <Button variant="outline" size="sm" onClick={copyLink} disabled={!liveUrl} className='flex gap-2'>
-              {copied ? <CheckCircle2 className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied ? "Copied" : "Copy link"}
-            </Button>
-            <Button size="sm" disabled={!liveUrl}>
-              <a href={liveUrl || "#"} target="_blank" rel="noopener noreferrer" className="flex gap-2">
-                <ExternalLink className="h-3.5 w-3.5 relative top-px" /> Visit
-              </a>
+          <div className="flex gap-2 lg:ml-6">
+            <a
+              href={liveUrl || "#"}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button disabled={!liveUrl} className="flex ">
+                <ExternalLink className="mr-1 h-4 w-4 relative bottom-px" />
+                  Visit Site
+              </Button>
+            </a>
+            <Button
+              variant="outline"
+              onClick={copyLink}
+              disabled={!liveUrl}
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-success" />
+                  Copied
+                </>
+              ) : (
+                <>
+                  <Copy className="mr-1 h-4 w-4" />
+                  Copy Link
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
