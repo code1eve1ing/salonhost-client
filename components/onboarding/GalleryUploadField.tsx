@@ -2,14 +2,19 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Loader2, Plus, X } from "lucide-react";
+import { Check, Loader2, Plus, X } from "lucide-react";
 
 interface GalleryUploadFieldProps {
   items: string[];
   onChange: (items: string[]) => void;
+  defaultUrls?: string[];
 }
 
-export function GalleryUploadField({ items, onChange }: GalleryUploadFieldProps) {
+export function GalleryUploadField({
+  items,
+  onChange,
+  defaultUrls = [],
+}: GalleryUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,6 +54,14 @@ export function GalleryUploadField({ items, onChange }: GalleryUploadFieldProps)
     onChange(items.filter((_, i) => i !== index));
   }
 
+  function toggleDefault(url: string) {
+    if (items.includes(url)) {
+      onChange(items.filter((u) => u !== url));
+    } else {
+      onChange([...items, url]);
+    }
+  }
+
   return (
     <div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -80,6 +93,45 @@ export function GalleryUploadField({ items, onChange }: GalleryUploadFieldProps)
           <span className="text-xs">Add photos</span>
         </button>
       </div>
+
+      {defaultUrls.length > 0 && (
+        <div className="mt-3">
+          <span className="mb-1.5 block text-[11px] text-muted-foreground">
+            Choose from defaults
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {defaultUrls.map((url, idx) => {
+              const selected = items.includes(url);
+              return (
+                <button
+                  key={`${url}-${idx}`}
+                  type="button"
+                  onClick={() => toggleDefault(url)}
+                  className={`relative h-14 w-14 overflow-hidden rounded-md border ${
+                    selected
+                      ? "border-primary ring-2 ring-primary"
+                      : "border-border hover:ring-2 hover:ring-primary/50"
+                  }`}
+                  aria-label={`${selected ? "Remove" : "Add"} default image ${idx + 1}`}
+                  aria-pressed={selected}
+                >
+                  <Image
+                    src={url}
+                    alt={`Default ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                  {selected && (
+                    <span className="absolute inset-0 flex items-center justify-center bg-foreground/40">
+                      <Check className="h-5 w-5 text-background" />
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
 

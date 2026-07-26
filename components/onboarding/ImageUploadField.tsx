@@ -11,6 +11,7 @@ interface ImageUploadFieldProps {
   onChange: (url: string) => void;
   folder: string;
   aspect?: "square" | "video" | "wide";
+  defaultUrls?: string[];
 }
 
 const aspectClass: Record<NonNullable<ImageUploadFieldProps["aspect"]>, string> = {
@@ -25,6 +26,7 @@ export function ImageUploadField({
   onChange,
   folder,
   aspect = "video",
+  defaultUrls = [],
 }: ImageUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,24 +80,53 @@ export function ImageUploadField({
             </button>
           </>
         ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
-            className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
-          >
-            {uploading ? (
-              <>
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <span className="text-xs">Uploading...</span>
-              </>
-            ) : (
-              <>
-                <Upload className="h-6 w-6" />
-                <span className="text-xs">Click to upload</span>
-              </>
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 overflow-y-auto py-4">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              disabled={uploading}
+              className="flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="h-6 w-6 animate-spin" />
+                  <span className="text-xs">Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="h-6 w-6" />
+                  <span className="text-xs">Click to upload</span>
+                </>
+              )}
+            </button>
+
+            {defaultUrls.length > 0 && (
+              <div className="flex w-full flex-col items-center gap-1.5 px-3">
+                <span className="text-[11px] text-muted-foreground">
+                  or choose a default
+                </span>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {defaultUrls.map((url, idx) => (
+                    <button
+                      key={`${url}-${idx}`}
+                      type="button"
+                      onClick={() => onChange(url)}
+                      disabled={uploading}
+                      className="relative h-12 w-12 overflow-hidden rounded-md border border-border hover:ring-2 hover:ring-primary"
+                      aria-label={`Use default image ${idx + 1}`}
+                    >
+                      <Image
+                        src={url}
+                        alt={`Default ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
-          </button>
+          </div>
         )}
       </div>
 
