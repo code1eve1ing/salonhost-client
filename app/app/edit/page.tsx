@@ -21,48 +21,9 @@ function AccordionPanel({
   isOpen: boolean;
   children: React.ReactNode;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const hasMounted = useRef(false);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const inner = innerRef.current;
-    if (!container || !inner) return;
-
-    if (!hasMounted.current) {
-      gsap.set(container, { height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 });
-      hasMounted.current = true;
-      return;
-    }
-
-    const height = inner.offsetHeight;
-
-    if (isOpen) {
-      gsap.set(container, { height: 0, opacity: 0 });
-      gsap.to(container, {
-        height,
-        opacity: 1,
-        duration: 0.35,
-        ease: "power2.out",
-        onComplete: () => {
-          gsap.set(container, { height: "auto" });
-        },
-      });
-    } else {
-      gsap.set(container, { height: inner.offsetHeight });
-      gsap.to(container, {
-        height: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.inOut",
-      });
-    }
-  }, [isOpen]);
-
   return (
-    <div ref={containerRef} className="overflow-hidden">
-      <div ref={innerRef}>{children}</div>
+    <div className={isOpen ? "block" : "hidden"}>
+      {children}
     </div>
   );
 }
@@ -133,7 +94,7 @@ function HelpImageModal({
 
 export default function EditSalonPage() {
   const { user, setUser } = useAuthStore();
-  const [openKey, setOpenKey] = useState<SalonSectionKey | null>(ONBOARDING_STEPS[0]?.key ?? null);
+  const [openKey, setOpenKey] = useState<SalonSectionKey | null>(null);
   const [drafts, setDrafts] = useState<Partial<Record<SalonSectionKey, SalonDetails[SalonSectionKey]>>>({});
   const [saving, setSaving] = useState<SalonSectionKey | null>(null);
   const [savedKey, setSavedKey] = useState<SalonSectionKey | null>(null);
