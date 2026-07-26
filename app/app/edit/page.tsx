@@ -1,123 +1,299 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
 import { useAuthStore } from "@/store/authStore";
 import { ONBOARDING_STEPS, SalonDetails, SalonSectionKey } from "@/types/salon";
 import { SectionForm } from "@/components/onboarding/SectionForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { updateUserDetails } from "@/lib/api";
-import { CheckCircle2, ChevronDown, Loader2 } from "lucide-react";
+import { CheckCircle2, ChevronDown, HelpCircle, Loader2, X } from "lucide-react";
+import Image from "next/image";
+
+const DEFAULT_HELP_IMAGE =
+  "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=1600&auto=format&fit=crop";
+
+function AccordionPanel({
+  isOpen,
+  children,
+}: {
+  isOpen: boolean;
+  children: React.ReactNode;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const innerRef = useRef<HTMLDivElement>(null);
+  const hasMounted = useRef(false);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const inner = innerRef.current;
+    if (!container || !inner) return;
+
+    if (!hasMounted.current) {
+      gsap.set(container, { height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 });
+      hasMounted.current = true;
+      return;
+    }
+
+    const height = inner.offsetHeight;
+
+    if (isOpen) {
+      gsap.set(container, { height: 0, opacity: 0 });
+      gsap.to(container, {
+        height,
+        opacity: 1,
+        duration: 0.35,
+        ease: "power2.out",
+        onComplete: () => {
+          gsap.set(container, { height: "auto" });
+        },
+      });
+    } else {
+      gsap.set(container, { height: inner.offsetHeight });
+      gsap.to(container, {
+        height: 0,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.inOut",
+      });
+    }
+  }, [isOpen]);
+
+  return (
+    <div ref={containerRef} className="overflow-hidden">
+      <div ref={innerRef}>{children}</div>
+    </div>
+  );
+}
+
+function HelpImageModal({
+  imageUrl,
+  onClose,
+}: {
+  imageUrl: string;
+  onClose: () => void;
+}) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.set(overlayRef.current, { opacity: 0 });
+    gsap.set(modalRef.current, { opacity: 0, y: 16, scale: 0.97 });
+    gsap.to(overlayRef.current, { opacity: 1, duration: 0.2, ease: "power1.out" });
+    gsap.to(modalRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4"
+      onClick={onClose}
+    >
+      <div
+        ref={modalRef}
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-card shadow-xl"
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-foreground/70 text-background hover:bg-foreground"
+          aria-label="Close"
+        >
+          <X className="h-4 w-4" />
+        </button>
+
+        <div className="relative h-auto w-full">
+          <Image
+            src={imageUrl}
+            alt="Section help"
+            width={1600}
+            height={0}
+            sizes="100vw"
+            className="h-auto w-full"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function EditSalonPage() {
   const { user, setUser } = useAuthStore();
-  const [activeKey, setActiveKey] = useState<SalonSectionKey>("branding_details");
-  const [draft, setDraft] = useState<SalonDetails[SalonSectionKey] | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [openKey, setOpenKey] = useState<SalonSectionKey | null>(ONBOARDING_STEPS[0]?.key ?? null);
+  const [drafts, setDrafts] = useState<Partial<Record<SalonSectionKey, SalonDetails[SalonSectionKey]>>>({});
+  const [saving, setSaving] = useState<SalonSectionKey | null>(null);
+  const [savedKey, setSavedKey] = useState<SalonSectionKey | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [helpImage, setHelpImage] = useState<string | null>(null);
 
   if (!user) return null;
 
-  const currentValue = (draft ?? user[activeKey]) as SalonDetails[typeof activeKey];
-
-  function selectSection(key: SalonSectionKey) {
-    setActiveKey(key);
-    setDraft(null);
-    setDropdownOpen(false);
-    setSaved(false);
+  function toggleSection(key: SalonSectionKey) {
+    setOpenKey((prev) => (prev === key ? null : key));
     setError(null);
   }
 
-  function handleChange(value: Partial<SalonDetails[typeof activeKey]>) {
-    setDraft(
-      (prev) =>
-        ({ ...(prev ?? user![activeKey]), ...value } as SalonDetails[typeof activeKey])
-    );
-    setSaved(false);
+  function handleChange(key: SalonSectionKey, value: Partial<SalonDetails[typeof key]>) {
+    setDrafts((prev) => ({
+      ...prev,
+      [key]: { ...(prev[key] ?? user![key]), ...value } as SalonDetails[typeof key],
+    }));
+    setSavedKey(null);
   }
 
-  async function handleSubmit() {
+  function handleCancel(key: SalonSectionKey) {
+    setDrafts((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+    setError(null);
+  }
+
+  async function handleSubmit(key: SalonSectionKey) {
+    const draft = drafts[key];
     if (!draft) return;
-    setSaving(true);
+    setSaving(key);
     setError(null);
     try {
-      const updated = await updateUserDetails({ [activeKey]: draft } as Partial<SalonDetails>);
+      const updated = await updateUserDetails({ [key]: draft } as Partial<SalonDetails>);
       setUser(updated);
-      setDraft(null);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      setDrafts((prev) => {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      });
+      setSavedKey(key);
+      setTimeout(() => setSavedKey((cur) => (cur === key ? null : cur)), 2500);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to save");
     } finally {
-      setSaving(false);
+      setSaving(null);
     }
   }
 
-  const activeLabel = ONBOARDING_STEPS.find((s) => s.key === activeKey)?.label;
-
   return (
-    <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6">
+    <div className="mx-auto max-w-2xl space-y-6 p-4 md:p-6 mb-80">
       <div>
         <h1 className="font-display text-2xl font-semibold text-foreground">Edit your site</h1>
         <p className="mt-0.5 text-sm text-muted-foreground">
-          Choose a section below to update its content.
+          Expand a section below to update its content.
         </p>
       </div>
 
-      {/* Section dropdown */}
-      <div className="relative">
-        <button
-          onClick={() => setDropdownOpen((o) => !o)}
-          className="flex w-full items-center justify-between rounded-md border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground"
-        >
-          {activeLabel}
-          <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-        </button>
+      <div className="space-y-3">
+        {ONBOARDING_STEPS.map((step) => {
+          const key = step.key;
+          const isOpen = openKey === key;
+          const draft = drafts[key];
+          const isDirty = draft != null;
+          const currentValue = (draft ?? user[key]) as SalonDetails[typeof key];
 
-        {dropdownOpen && (
-          <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-md border border-border bg-card shadow-lg">
-            {ONBOARDING_STEPS.map((step) => (
+          return (
+            <Card key={key} className="overflow-hidden py-0">
               <button
-                key={step.key}
-                onClick={() => selectSection(step.key)}
-                className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors hover:bg-muted ${
-                  step.key === activeKey ? "bg-primary/10 font-medium text-primary" : "text-foreground"
-                }`}
+                type="button"
+                onClick={() => toggleSection(key)}
+                className="flex w-full items-center justify-between px-4 py-3.5 text-left"
               >
-                {step.label}
+                <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+                  {step.label}
+                  {isDirty && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-label="Unsaved changes" />
+                  )}
+                </span>
+
+                <span className="flex items-center gap-2">
+                  {isOpen && (
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setHelpImage(DEFAULT_HELP_IMAGE);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setHelpImage(DEFAULT_HELP_IMAGE);
+                        }
+                      }}
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                      aria-label={`Show help image for ${step.label}`}
+                    >
+                      <HelpCircle className="h-4 w-4" />
+                    </span>
+                  )}
+                  <ChevronDown
+                    className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                      }`}
+                  />
+                </span>
               </button>
-            ))}
-          </div>
-        )}
+
+              <AccordionPanel isOpen={isOpen}>
+                <CardContent className="border-t border-border pt-5 pb-6">
+                  <SectionForm
+                    sectionKey={key}
+                    value={currentValue}
+                    onChange={(value) => handleChange(key, value)}
+                  />
+
+                  {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
+
+                  <div className="mt-6 flex items-center gap-3">
+                    <Button onClick={() => handleSubmit(key)} disabled={!isDirty || saving === key}>
+                      {saving === key ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" /> Saving...
+                        </>
+                      ) : (
+                        "Save changes"
+                      )}
+                    </Button>
+
+                    {isDirty && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => handleCancel(key)}
+                        disabled={saving === key}
+                      >
+                        Cancel
+                      </Button>
+                    )}
+
+                    {savedKey === key && (
+                      <span className="flex items-center gap-1.5 text-sm text-success">
+                        <CheckCircle2 className="h-4 w-4" /> Saved
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </AccordionPanel>
+            </Card>
+          );
+        })}
       </div>
 
-      {/* Reused form */}
-      <Card>
-        <CardContent className="pt-6">
-          <SectionForm sectionKey={activeKey} value={currentValue} onChange={handleChange} />
-
-          {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-
-          <div className="mt-6 flex items-center gap-3">
-            <Button onClick={handleSubmit} disabled={!draft || saving}>
-              {saving ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Saving...
-                </>
-              ) : (
-                "Save changes"
-              )}
-            </Button>
-            {saved && (
-              <span className="flex items-center gap-1.5 text-sm text-success">
-                <CheckCircle2 className="h-4 w-4" /> Saved
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {helpImage && (
+        <HelpImageModal imageUrl={helpImage} onClose={() => setHelpImage(null)} />
+      )}
     </div>
   );
 }
