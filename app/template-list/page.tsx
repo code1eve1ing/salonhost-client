@@ -258,10 +258,10 @@ export function TemplateCard({ template, onUse, onPreview, isSelected = false }:
 
         {/* Footer */}
         <div className="flex gap-2 border-t border-border p-4">
-          <Button variant="outline" className="flex-1 gap-1.5" onClick={handlePreviewClick}>
+          {/* <Button variant="outline" className="flex-1 gap-1.5" onClick={handlePreviewClick}>
             <Eye className="h-4 w-4" />
             Preview
-          </Button>
+          </Button> */}
           <Button className="flex-1 gap-1.5" disabled={isSelected} onClick={onUse}>
             {isSelected ? (
               <>
