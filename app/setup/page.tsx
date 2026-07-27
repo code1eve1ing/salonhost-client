@@ -3,22 +3,18 @@
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useOnboardingStore } from "@/store/onboardingStore";
-import { ONBOARDING_STEPS } from "@/types/salon";
-import { SectionForm } from "@/components/onboarding/SectionForm";
 import { SubdomainField } from "@/components/onboarding/SubdomainField";
 import { ArrowLeft, ArrowRight, Loader2, Scissors, AlertCircle } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import RedirectHandlerForAuthenticatedUser from "@/components/public/RedirectHandlerForAuthenticatedUser";
-
-const TOTAL_STEPS = ONBOARDING_STEPS.length + 1; // +1 for the final subdomain step
+import { useRouter } from "next/navigation";
 
 function OnboardingInner() {
     const searchParams = useSearchParams();
     const oauthError = searchParams.get("error");
-
+    const router = useRouter()
     const { currentStepIndex, details, subdomain, setStepIndex, nextStep, prevStep, updateSection, setSubdomain } =
         useOnboardingStore();
     const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
@@ -29,17 +25,23 @@ function OnboardingInner() {
 
 
     async function handleContinue() {
+        const template = searchParams.get("template");
+        if (!template) {
+            alert('Please SElect a Template before continue')
+            router.push('/template-list')
+            return
+        }
         // Final step: stash the draft in a cookie, then hand off to Google OAuth.
         setSubmitting(true);
         setSubmitError(null);
         try {
-            const data_to_sync = {
+            const params = new URLSearchParams({
+                action: "signup",
                 subdomain,
-                ...details
-            }
-            localStorage.setItem('data_to_sync', JSON.stringify(data_to_sync))
+                template
+            });
             setTimeout(() => {
-                window.location.href = "/api/auth/google";
+                window.location.href = `/api/auth/google?${params.toString()}`;
             }, 200);
         } catch (err) {
             setSubmitError(err instanceof Error ? err.message : "Something went wrong");
@@ -47,11 +49,9 @@ function OnboardingInner() {
         }
     }
 
-    const currentSection = ONBOARDING_STEPS[currentStepIndex];
-
     return (
         <div className="min-h-screen bg-background">
-            <RedirectHandlerForAuthenticatedUser/>
+            <RedirectHandlerForAuthenticatedUser />
             <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
                 <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
                     <Link href="/" className="flex items-center gap-2">
@@ -116,7 +116,10 @@ function OnboardingInner() {
                         <Link href="/template-list">
                             <Button
                                 variant="outline"
-                                onClick={() => {localStorage.removeItem('template_to_sync') }}
+                                onClick={() => {
+
+                                    //TODO: handle action
+                                }}
                                 disabled={submitting}
                             >
                                 <ArrowLeft className="h-4 w-4" />

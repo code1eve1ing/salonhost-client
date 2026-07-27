@@ -11,14 +11,9 @@ import { useEffect } from "react";
 export default function LoginPage() {
 
   async function handleContinue() {
-    // TODO: improve login functionality
-    localStorage.setItem('is_login_request', '1')
-    window.location.href = "/api/auth/google";
+    window.location.href = "/api/auth/google?action=login";
   }
-
-  useEffect(() => {
-    localStorage.removeItem('is_login_request')
-  }, [])
+ 
 
   return (
     <div className="min-h-screen bg-background">

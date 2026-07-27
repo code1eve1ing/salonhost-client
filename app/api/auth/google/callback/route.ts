@@ -33,13 +33,22 @@ export async function GET(req: NextRequest) {
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const storedState = req.cookies.get("oauth_state")?.value;
+  const action = req.cookies.get("oauth_action")?.value ?? "login";
+  const subdomain = req.cookies.get("oauth_subdomain")?.value;
+  const template = req.cookies.get("oauth_template")?.value;
+
+  const redirectPage = action === "login" ? "/login" : "/onboarding";
 
   if (errorParam) {
-    return NextResponse.redirect(`${appUrl}/onboarding?error=oauth_denied`);
+    return NextResponse.redirect(
+      `${appUrl}${redirectPage}?error=oauth_denied`
+    );
   }
 
   if (!code || !state || state !== storedState) {
-    return NextResponse.redirect(`${appUrl}/onboarding?error=invalid_state`);
+    return NextResponse.redirect(
+      `${appUrl}${redirectPage}?error=invalid_state`
+    );
   }
 
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -48,7 +57,9 @@ export async function GET(req: NextRequest) {
   const backendUrl = process.env.BACKEND_API_URL || "http://localhost:5000/api/v1";
 
   if (!clientId || !clientSecret || !redirectUri) {
-    return NextResponse.redirect(`${appUrl}/onboarding?error=oauth_not_configured`);
+    return NextResponse.redirect(
+      `${appUrl}${redirectPage}?error=oauth_not_configured`
+    );
   }
 
   try {
@@ -92,6 +103,12 @@ export async function GET(req: NextRequest) {
         email: profile.email,
         name: profile.name,
         avatar: profile.picture,
+        ...(action === "signup"
+          ? {
+            subdomain,
+            template,
+          }
+          : {}),
       }),
     });
 
@@ -99,7 +116,9 @@ export async function GET(req: NextRequest) {
 
     if (!createRes.ok || !createData.success) {
       const reason = encodeURIComponent(createData.message || "signup_failed");
-      return NextResponse.redirect(`${appUrl}/onboarding?error=${reason}`);
+      return NextResponse.redirect(
+        `${appUrl}${redirectPage}?error=${reason}`
+      );
     }
 
     // 5. Hand off to the client: redirect to a small bridge page that reads
@@ -110,12 +129,17 @@ export async function GET(req: NextRequest) {
     const response = NextResponse.redirect(
       `${appUrl}/auth/complete?token=${encodeURIComponent(createData.token)}`
     );
+
     response.cookies.delete("oauth_state");
-    response.cookies.delete("onboarding_draft");
+    response.cookies.delete("oauth_action");
+    response.cookies.delete("oauth_subdomain");
+    response.cookies.delete("oauth_template");
+
     return response;
   } catch (err) {
     console.error("[oauth callback] error:", err);
-    // TODO: manage for login also
-    return NextResponse.redirect(`${appUrl}/template-list?error=oauth_failed`);
+    return NextResponse.redirect(
+      `${appUrl}${redirectPage}?error=oauth_failed`
+    );
   }
 }

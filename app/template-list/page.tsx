@@ -138,8 +138,7 @@ export default function TemplatesPage() {
                 template={t}
                 onPreview={() => { }}
                 onUse={() => {
-                  localStorage.setItem("template_to_sync", t.id);
-                  router.push("/setup");
+                  router.push(`/setup?template=${t.id}`);
                 }}
               />
             ))}

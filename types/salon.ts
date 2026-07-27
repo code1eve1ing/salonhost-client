@@ -105,7 +105,6 @@ export interface User extends SalonDetails {
   counter: string;
   subdomain: string | null;
   subscription: Subscription;
-  onboarding_completed: boolean;
   createdAt: string;
   active_template: string;
 }

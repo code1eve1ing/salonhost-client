@@ -14,7 +14,8 @@ export const runtime = "nodejs";
  */
 export async function GET(req: NextRequest) {
   const clientId = process.env.GOOGLE_CLIENT_ID;
-  const redirectUri = process.env.GOOGLE_REDIRECT_URI; // e.g. http://localhost:3000/api/auth/google/callback
+  const redirectUri = process.env.GOOGLE_REDIRECT_URI;
+
   if (!clientId || !redirectUri) {
     return NextResponse.json(
       { success: false, message: "Google OAuth is not configured" },
@@ -22,7 +23,12 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // CSRF protection: random state, verified in the callback via a signed cookie.
+  const searchParams = req.nextUrl.searchParams;
+
+  const action = searchParams.get("action") ?? "login";
+  const subdomain = searchParams.get("subdomain");
+  const template = searchParams.get("template");
+
   const state = crypto.randomBytes(16).toString("hex");
 
   const params = new URLSearchParams({
@@ -39,13 +45,29 @@ export async function GET(req: NextRequest) {
     `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`
   );
 
-  response.cookies.set("oauth_state", state, {
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 10, // 10 minutes
+    sameSite: "lax" as const,
+    maxAge: 60 * 10,
     path: "/",
-  });
+  };
+
+  response.cookies.set("oauth_state", state, cookieOptions);
+
+  // Store action
+  response.cookies.set("oauth_action", action, cookieOptions);
+
+  // Store signup-specific info
+  if (action === "signup") {
+    if (subdomain) {
+      response.cookies.set("oauth_subdomain", subdomain, cookieOptions);
+    }
+
+    if (template) {
+      response.cookies.set("oauth_template", template, cookieOptions);
+    }
+  }
 
   return response;
 }
