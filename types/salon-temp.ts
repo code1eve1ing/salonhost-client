@@ -14,8 +14,8 @@ export interface Branding {
     name: string;
     description: string;
     background: string;
-    primaryButton: HeroButton;
-    secondaryButton: HeroButton;
+    primaryButton: string;
+    secondaryButton: string;
   }
   
   export interface Intro {

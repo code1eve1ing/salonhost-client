@@ -50,26 +50,26 @@ export function HeroForm({ value, onChange }: Props) {
         />
       </div>
 
-      <ImageUploadField
+      {/* <ImageUploadField
         label="Background image"
         value={value.background}
         onChange={(url) => onChange({ background: url })}
         folder="hero-background"
         aspect="wide"
         defaultUrls={defaultUrls}
-      />
+      /> */}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <Label>Primary button text</Label>
           <Input
-            value={value.primaryButton.text}
+            value={value.primaryButton}
             onChange={(e) =>
-              onChange({ primaryButton: { ...value.primaryButton, text: e.target.value } })
+              onChange({ primaryButton: e.target.value })
             }
           />
         </div>
-        <div>
+        {/* <div>
           <Label>Primary button link</Label>
           <Input
             value={value.primaryButton.link}
@@ -77,17 +77,17 @@ export function HeroForm({ value, onChange }: Props) {
               onChange({ primaryButton: { ...value.primaryButton, link: e.target.value } })
             }
           />
-        </div>
+        </div> */}
         <div>
           <Label>Secondary button text</Label>
           <Input
-            value={value.secondaryButton.text}
+            value={value.secondaryButton}
             onChange={(e) =>
-              onChange({ secondaryButton: { ...value.secondaryButton, text: e.target.value } })
+              onChange({ secondaryButton: e.target.value })
             }
           />
         </div>
-        <div>
+        {/* <div>
           <Label>Secondary button link</Label>
           <Input
             value={value.secondaryButton.link}
@@ -95,7 +95,7 @@ export function HeroForm({ value, onChange }: Props) {
               onChange({ secondaryButton: { ...value.secondaryButton, link: e.target.value } })
             }
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

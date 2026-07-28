@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useAuthStore } from "@/store/authStore";
-import { ONBOARDING_STEPS, SalonDetails, SalonSectionKey } from "@/types/salon";
+import { BrandingDetails, ContactDetails, GalleryDetails, HeroDetails, HoursDetails, IntroDetails, ONBOARDING_STEPS, OffersDetails, SalonDetails, SalonSectionKey, ServicesDetails } from "@/types/salon";
 import { SectionForm } from "@/components/onboarding/SectionForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -100,6 +100,7 @@ export default function EditSalonPage() {
   const [savedKey, setSavedKey] = useState<SalonSectionKey | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [helpImage, setHelpImage] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([])
 
   if (!user) return null;
 
@@ -109,6 +110,9 @@ export default function EditSalonPage() {
   }
 
   function handleChange(key: SalonSectionKey, value: Partial<SalonDetails[typeof key]>) {
+    if (errors.length > 0) {
+      setErrors([])
+    }
     setDrafts((prev) => ({
       ...prev,
       [key]: { ...(prev[key] ?? user![key]), ...value } as SalonDetails[typeof key],
@@ -117,6 +121,9 @@ export default function EditSalonPage() {
   }
 
   function handleCancel(key: SalonSectionKey) {
+    if (errors.length > 0) {
+      setErrors([])
+    }
     setDrafts((prev) => {
       const next = { ...prev };
       delete next[key];
@@ -126,11 +133,148 @@ export default function EditSalonPage() {
   }
 
   async function handleSubmit(key: SalonSectionKey) {
-    const draft = drafts[key];
+    let draft = drafts[key];
     if (!draft) return;
+    const validationErrors = []
+    const isEmpty = (value?: string) => !value?.trim();
+    switch (key) {
+      case "branding_details": {
+        const data = draft as BrandingDetails;
+        if (isEmpty(data.name))
+          validationErrors.push("Salon Name is required");
+        if (isEmpty(data.logoUrl))
+          validationErrors.push("Logo is required");
+        break;
+      }
+
+      case "hero_details": {
+        const data = draft as HeroDetails;
+        if (isEmpty(data.name))
+          validationErrors.push("Display Name is required");
+        if (isEmpty(data.description))
+          validationErrors.push("Description is required");
+        if (isEmpty(data.primaryButton))
+          validationErrors.push("Primary Button Text is required");
+        if (isEmpty(data.secondaryButton))
+          validationErrors.push("Secondary Button Text is required");
+        break;
+      }
+
+      case "intro_details": {
+        const data = draft as IntroDetails;
+        const hasTitle = !isEmpty(data.title);
+        const hasDescription = !isEmpty(data.description);
+        if (hasTitle !== hasDescription) {
+          validationErrors.push(
+            "Provide both Title and Description, or leave both empty"
+          );
+        }
+
+        break;
+      }
+
+      case "services_details": {
+        const data = draft as ServicesDetails;
+        // Optional section
+        if (!isEmpty(data.title) || data.items.length > 0) {
+          if (isEmpty(data.title))
+            validationErrors.push("Services Title is required");
+          // if (data.items.length === 0)
+          //   validationErrors.push("At least one Service Group is required");
+          data.items.forEach((group, groupIndex) => {
+            if (isEmpty(group.title))
+              validationErrors.push(
+                `Service Group ${groupIndex + 1}: Title is required`
+              );
+            if (group.items.length === 0)
+              validationErrors.push(
+                `Service Group ${groupIndex + 1}: Add at least one service`
+              );
+            group.items.forEach((item, itemIndex) => {
+              if (isEmpty(item.name))
+                validationErrors.push(
+                  `Service Group ${groupIndex + 1}, Service ${itemIndex + 1
+                  }: Name is required`
+                );
+              if (isEmpty(item.price))
+                validationErrors.push(
+                  `Service Group ${groupIndex + 1}, Service ${itemIndex + 1
+                  }: Price is required`
+                );
+            });
+          });
+        }
+        break;
+      }
+
+      case "gallery_details": {
+        const data = draft as GalleryDetails;
+        if(!data.title){
+          validationErrors.push("Title is required");
+
+        }
+        if (data.items.length < 3)
+          validationErrors.push("At least 3 gallery images are required");
+        break;
+      }
+
+      case "offers_details": {
+        const data = draft as OffersDetails;
+        // Optional section
+        if (data.items.length > 0) {
+          data.items.forEach((offer, index) => {
+            if (isEmpty(offer.title))
+              validationErrors.push(
+                `Offer ${index + 1}: Title is required`
+              );
+            if (isEmpty(offer.description))
+              validationErrors.push(
+                `Offer ${index + 1}: Description is required`
+              );
+          });
+        }
+        break;
+      }
+
+      case "hours_details": {
+        const data = draft as HoursDetails;
+        if (data.items.length < 5)
+          validationErrors.push("At least 5 working days are required");
+        data.items.forEach((item, index) => {
+          if (isEmpty(item.day))
+            validationErrors.push(
+              `Working Hour ${index + 1}: Day is required`
+            );
+          if (isEmpty(item.time))
+            validationErrors.push(
+              `Working Hour ${index + 1}: Time is required`
+            );
+        });
+        break;
+      }
+
+      case "contact_details": {
+        const data = draft as ContactDetails;
+        if (isEmpty(data.title))
+          validationErrors.push("Title is required");
+        if (isEmpty(data.whatsapp))
+          validationErrors.push("WhatsApp Number is required");
+        if (isEmpty(data.address))
+          validationErrors.push("Address is required");
+        break;
+      }
+      default:
+        console.log("Skip validation");
+    }
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     setSaving(key);
     setError(null);
     try {
+      // TODO: trim all data in draft before sending...
       const updated = await updateUserDetails({ [key]: draft } as Partial<SalonDetails>);
       setUser(updated);
       setDrafts((prev) => {
@@ -216,7 +360,11 @@ export default function EditSalonPage() {
                   />
 
                   {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-
+                  {
+                    errors.length > 0 && <div className="mt-4">
+                      {errors.map(e => <p className="text-sm text-destructive">- {e}</p>)}
+                    </div>
+                  }
                   <div className="mt-6 flex items-center gap-3">
                     <Button onClick={() => handleSubmit(key)} disabled={!isDirty || saving === key}>
                       {saving === key ? (

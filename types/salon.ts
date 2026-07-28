@@ -13,9 +13,8 @@ export interface HeroDetails {
   subtitle: string;
   name: string;
   description: string;
-  background: string;
-  primaryButton: ButtonLink;
-  secondaryButton: ButtonLink;
+  primaryButton: string;
+  secondaryButton: string;
 }
 
 export interface IntroDetails {
@@ -120,9 +119,8 @@ export const DEFAULT_SALON_DETAILS: SalonDetails = {
     name: "My Salon",
     description:
       "Experience premium beauty treatments, expert stylists and luxurious self-care in a modern salon crafted for your comfort.",
-    background: "",
-    primaryButton: { text: "Book Appointment", link: "#contact" },
-    secondaryButton: { text: "Explore Services", link: "#services" },
+    primaryButton: "Book Appointment",
+    secondaryButton: "Explore Services",
   },
   intro_details: {
     title: "Designed Around You",
