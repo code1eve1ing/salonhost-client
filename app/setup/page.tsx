@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import RedirectHandlerForAuthenticatedUser from "@/components/public/RedirectHandlerForAuthenticatedUser";
 import { useRouter } from "next/navigation";
+import { getSiteURL } from "@/lib/utils";
 
 function OnboardingInner() {
     const searchParams = useSearchParams();
@@ -17,7 +18,6 @@ function OnboardingInner() {
     const router = useRouter()
     const { currentStepIndex, details, subdomain, setStepIndex, nextStep, prevStep, updateSection, setSubdomain } =
         useOnboardingStore();
-    const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
     const [subdomainAvailable, setSubdomainAvailable] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -102,8 +102,7 @@ function OnboardingInner() {
                         <p className="text-sm text-muted-foreground">
                             Your website will be available at{" "}
                             <strong className="text-foreground">
-                                {subdomain || "your-salon-name"}
-                                {postfix}
+                                {getSiteURL(subdomain || 'your-salon-name')}
                             </strong>
                         </p>
                     </div>

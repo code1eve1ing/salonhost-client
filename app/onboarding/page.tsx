@@ -9,6 +9,7 @@ import { ONBOARDING_STEPS } from "@/types/salon";
 import { SectionForm } from "@/components/onboarding/SectionForm";
 import { SubdomainField } from "@/components/onboarding/SubdomainField";
 import { ArrowLeft, ArrowRight, Loader2, Scissors, AlertCircle } from "lucide-react";
+import { getSiteURL } from "@/lib/utils";
 
 const TOTAL_STEPS = ONBOARDING_STEPS.length + 1; // +1 for the final subdomain step
 
@@ -18,7 +19,6 @@ function OnboardingInner() {
 
   const { currentStepIndex, details, subdomain, setStepIndex, nextStep, prevStep, updateSection, setSubdomain } =
     useOnboardingStore();
-    const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   const [subdomainAvailable, setSubdomainAvailable] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -112,7 +112,9 @@ function OnboardingInner() {
               onAvailabilityChange={setSubdomainAvailable}
             />
             <p className="text-sm text-muted-foreground">
-              This will be your salon&apos;s public link: <strong className="text-foreground">{subdomain || "your-salon-name"}{postfix}</strong>
+              This will be your salon&apos;s public link: <strong className="text-foreground">
+                {getSiteURL(subdomain)}
+              </strong>
             </p>
           </div>
         )}

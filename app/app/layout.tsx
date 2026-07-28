@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Loader2, Home, PenSquare, User, Menu, X, Scissors, ExternalLink, Layout } from "lucide-react";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { getSiteURL } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { icon: Home, label: "Dashboard", href: "/app" },
@@ -34,8 +35,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     if (href === "/app") return pathname === "/app";
     return pathname.startsWith(href);
   };
-
-  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   if (loading) {
     return (
@@ -97,7 +96,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <>
               <Separator className="my-3" />
               <a
-                href={`https://${user.subdomain}${postfix}`}
+                href={getSiteURL(user.subdomain)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
@@ -123,7 +122,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-medium text-foreground">{user?.name}</p>
               <p className="truncate text-xs text-muted-foreground">
-                {user?.subdomain ? `${user.subdomain}${postfix}` : "No subdomain yet"}
+                {user?.subdomain ? getSiteURL(user.subdomain) : "No subdomain yet"}
               </p>
             </div>
           </Link>

@@ -27,11 +27,11 @@ import {
   Scissors,
 } from "lucide-react";
 import RedirectHandlerForAuthenticatedUser from "../public/RedirectHandlerForAuthenticatedUser";
+import { getSiteURL } from "@/lib/utils";
 
 export default function LandingPage() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({
@@ -157,7 +157,7 @@ export default function LandingPage() {
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { title: "Pick a Template", desc: "Choose a design that matches your salon's vibe." },
-              { title: "Select Subdomain", desc: `Get your own link: yoursalon${postfix}` },
+              { title: "Select Subdomain", desc: `Get your own link: ${getSiteURL('salon-name')}` },
               { title: "Go Live", desc: `Now, your website is Ready!!!` },
               { title: "Grow", desc: "Customers find you, message you, and book in." },
             ].map((item, i) => (
@@ -188,7 +188,7 @@ export default function LandingPage() {
           {[
             { icon: Smartphone, title: "Mobile-friendly", desc: "Looks sharp on any phone, tablet, or laptop." },
             // { icon: MessageCircle, title: "WhatsApp booking button", desc: "Customers message or call you directly." },
-            { icon: Globe, title: "Your own subdomain", desc: `salonname${postfix} — yours to share anywhere.` },
+            { icon: Globe, title: "Your own subdomain", desc: `${getSiteURL('salon-name')} — yours to share anywhere.` },
             { icon: ImageIcon, title: "Photo gallery", desc: "Show off your best work with a scrollable gallery." },
             { icon: MapPin, title: "Google Maps embed", desc: "Help customers find your salon easily." },
             { icon: Sparkles, title: "Service menu & pricing", desc: "Display your services and prices clearly." },

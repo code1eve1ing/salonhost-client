@@ -18,6 +18,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
+import { getSiteURL } from "@/lib/utils";
 
 
 
@@ -26,9 +27,7 @@ export default function DashboardPage() {
   const [copied, setCopied] = useState(false);
   if (!user) return null;
 
-  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
-  const liveUrl = user.subdomain ? `https://${user.subdomain}${postfix}` : null;
-
+  const liveUrl = getSiteURL(user.subdomain)
   function copyLink() {
     if (!liveUrl) return;
     navigator.clipboard.writeText(liveUrl);
@@ -103,7 +102,7 @@ export default function DashboardPage() {
             <div className="rounded-lg border bg-muted/40 px-4 py-3">
               <p className="truncate font-mono text-base font-semibold text-primary">
                 {user.subdomain
-                  ? `${user.subdomain}${postfix}`
+                  ? getSiteURL(user.subdomain)
                   : "No subdomain configured"}
               </p>
             </div>
@@ -116,7 +115,7 @@ export default function DashboardPage() {
             >
               <Button disabled={!liveUrl} className="flex ">
                 <ExternalLink className="mr-1 h-4 w-4 relative bottom-px" />
-                  Visit Site
+                Visit Site
               </Button>
             </a>
             <Button
