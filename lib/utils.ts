@@ -12,7 +12,8 @@ export function getSiteURL(domain: string | null) {
     return (appURL + '/' + domain)
   } else {
     const appURLSegments = appURL?.split('//')
-    const siteURL = (appURLSegments?.[0] ?? 'http:') + '//' + domain + '.' + (appURLSegments?.[1] ?? 'localhost:3000')
+    const host = (appURLSegments?.[1] ?? 'localhost:3000').replace('www.', '')
+    const siteURL = (appURLSegments?.[0] ?? 'http:') + '//' + domain + '.' + host
     return siteURL
   }
 }
