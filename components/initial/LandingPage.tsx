@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -16,7 +15,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   Sparkles,
   Smartphone,
-  MessageCircle,
   Image as ImageIcon,
   MapPin,
   Globe,
@@ -24,10 +22,11 @@ import {
   ArrowRight,
   Menu,
   X,
-  Scissors,
 } from "lucide-react";
 import RedirectHandlerForAuthenticatedUser from "../public/RedirectHandlerForAuthenticatedUser";
 import { getSiteURL } from "@/lib/utils";
+import SiteHeader from "../common/SiteHeader";
+import SiteFooter from "../common/SiteFooter";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -38,77 +37,64 @@ export default function LandingPage() {
       behavior: "smooth",
       block: "start",
     });
+    setMobileMenuOpen(false)
   };
+
+  const mobileMenu = <>
+    {mobileMenuOpen && (
+      <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
+        <nav className="flex flex-col gap-1 pt-3">
+          <a onClick={() => scrollTo("features")} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            Features
+          </a>
+          <a onClick={() => scrollTo("how-it-works")} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            How it works
+          </a>
+          <Link href="/template-list" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
+            Templates
+          </Link>
+          <Separator className="my-2" />
+          <Button variant="outline" onClick={() => router.push("/login")} className="w-full">Log in</Button>
+          <Button className="w-full" onClick={() => router.push("/template-list")}>Start for Free</Button>
+        </nav>
+      </div>
+    )}
+  </>
 
   return (
     <div className="min-h-screen bg-background">
       <RedirectHandlerForAuthenticatedUser />
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Scissors className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="font-display text-lg font-semibold text-foreground">
-              SalonHost
-            </span>
+      <SiteHeader mobileMenu={mobileMenu}><>
+        <nav className="hidden items-center gap-6 md:flex">
+          <a onClick={() => scrollTo("how-it-works")}
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            How it works
+          </a>
+          <a onClick={() => scrollTo("features")} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            Features
+          </a>
+          <Link href="/template-list" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            Templates
           </Link>
+        </nav>
 
-          <nav className="hidden items-center gap-6 md:flex">
-            <a onClick={() => scrollTo("how-it-works")}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              How it works
-            </a>
-            <a onClick={() => scrollTo("features")} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Features
-            </a>
-            <Link href="/template-list" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Templates
-            </Link>
-            <a href="#pricing" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Pricing
-            </a>
-          </nav>
-
-          <div className="hidden items-center gap-2 md:flex">
-            <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
-              Log in
-            </Button>
-            <Button size="sm" onClick={() => router.push("/template-list")}>Start for Free</Button>
-          </div>
-
-          <button
-            className="flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground md:hidden"
-            onClick={() => setMobileMenuOpen((o) => !o)}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+        <div className="hidden items-center gap-2 md:flex">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
+            Log in
+          </Button>
+          <Button size="sm" onClick={() => router.push("/template-list")}>Start for Free</Button>
         </div>
 
-        {mobileMenuOpen && (
-          <div className="border-t border-border bg-background px-4 pb-4 md:hidden">
-            <nav className="flex flex-col gap-1 pt-3">
-              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
-                Features
-              </a>
-              <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
-                How it works
-              </a>
-              <Link href="/templates" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
-                Templates
-              </Link>
-              <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground">
-                Pricing
-              </a>
-              <Separator className="my-2" />
-              <Button variant="outline" onClick={() => router.push("/login")} className="w-full">Log in</Button>
-              <Button className="w-full" onClick={() => router.push("/template-list")}>Start for Free</Button>
-            </nav>
-          </div>
-        )}
-      </header>
+        <button
+          className="flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground md:hidden"
+          onClick={() => setMobileMenuOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+
+      </>
+      </SiteHeader>
 
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:px-6 md:py-32">
@@ -187,7 +173,6 @@ export default function LandingPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {[
             { icon: Smartphone, title: "Mobile-friendly", desc: "Looks sharp on any phone, tablet, or laptop." },
-            // { icon: MessageCircle, title: "WhatsApp booking button", desc: "Customers message or call you directly." },
             { icon: Globe, title: "Your own subdomain", desc: `${getSiteURL('salon-name')} — yours to share anywhere.` },
             { icon: ImageIcon, title: "Photo gallery", desc: "Show off your best work with a scrollable gallery." },
             { icon: MapPin, title: "Google Maps embed", desc: "Help customers find your salon easily." },
@@ -205,46 +190,8 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
-
       <Separator />
 
-      {/* Pricing */}
-      {/* <section id="pricing" className="mx-auto max-w-6xl px-4 py-20 md:px-6">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 font-display text-3xl font-semibold text-foreground">
-            Simple, honest pricing
-          </h2>
-          <p className="text-muted-foreground">Cheaper than a single haircut.</p>
-        </div>
-        <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
-          <Card className="border-border/60">
-            <CardHeader>
-              <CardTitle>Free Trial</CardTitle>
-              <CardDescription>Try everything, no card needed</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 font-display text-3xl font-semibold text-foreground">₹0</p>
-              <p className="mb-6 text-sm text-muted-foreground">for 7 days</p>
-              <Button variant="outline" className="w-full" onClick={() => router.push("/onboarding")}>Start Free Trial</Button>
-            </CardContent>
-          </Card>
-          <Card className="border-primary/30 bg-primary/5 ring-1 ring-primary/20">
-            <CardHeader>
-              <CardTitle>Monthly</CardTitle>
-              <CardDescription>All templates, unlimited edits, support</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 font-display text-3xl font-semibold text-foreground">
-                ₹49<span className="text-base font-normal text-muted-foreground">/month</span>
-              </p>
-              <p className="mb-6 text-sm text-muted-foreground">Cancel anytime</p>
-              <Button className="w-full" onClick={() => router.push("/onboarding")}>Start Free Trial</Button>
-            </CardContent>
-          </Card>
-        </div>
-      </section> */}
-
-      {/* Final CTA */}
       <section className="mx-auto max-w-6xl px-4 py-20 text-center md:px-6">
         <div className="rounded-2xl border border-primary/20 bg-primary/8 px-6 py-14">
           <h2 className="mb-4 font-display text-3xl font-semibold text-foreground">
@@ -259,24 +206,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground sm:flex-row md:px-6">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
-              <Scissors className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
-            <span className="font-semibold text-foreground">SalonHost</span>
-          </div>
-          <p>@ 2026 SalonHost.
-            {/* All rights reserved. */}
-          </p>
-          {/* <div className="flex gap-4">
-            <a href="#" className="transition-colors hover:text-foreground">Privacy</a>
-            <a href="#" className="transition-colors hover:text-foreground">Terms</a>
-          </div> */}
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
