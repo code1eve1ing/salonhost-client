@@ -28,7 +28,7 @@ import { getSiteURL } from "@/lib/utils";
 import SiteHeader from "../common/SiteHeader";
 import SiteFooter from "../common/SiteFooter";
 
-export default function LandingPage() {
+export default function LandingPage({ jsonLd }: { jsonLd: any }) {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -207,6 +207,12 @@ export default function LandingPage() {
       </section>
 
       <SiteFooter />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
     </div>
   );
 }

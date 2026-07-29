@@ -121,7 +121,6 @@ export default function TemplatesPage() {
                   key={t.id}
                   template={t}
                   isSelected={t.id === user?.active_template}
-                  onPreview={() => {}}
                   onUse={() => handleUse(t.id)}
                 />
               ))}

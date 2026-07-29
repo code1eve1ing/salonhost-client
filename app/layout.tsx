@@ -20,12 +20,6 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "SalonHost — Get Your Salon Online in Minutes",
-  description:
-    "Ready-made website templates for salons & spas. 7-day free trial, then ₹49/month.",
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
