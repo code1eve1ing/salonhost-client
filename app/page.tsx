@@ -6,8 +6,7 @@ import TemplateRenderer from "@/components/public/TemplateRenderer";
 export default async function Home() {
   const headerList = await headers();
   const subdomain = headerList.get("x-subdomain");
-  const isSubdomain = subdomain !== 'www';
-
+  const isSubdomain = subdomain && subdomain !== 'www';
   if (!isSubdomain ) {
     return <LandingPage />;
   }

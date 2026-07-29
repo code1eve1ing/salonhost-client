@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { checkSubdomainAvailability } from "@/lib/api";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { getSiteURL } from "@/lib/utils";
 
 interface SubdomainFieldProps {
   value: string;
@@ -20,7 +21,6 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
   const [status, setStatus] = useState<CheckState>("idle");
   const [reason, setReason] = useState<string | null>(null);
   const debouncedValue = useDebouncedValue(value, 500);
-  const postfix = process.env.NEXT_PUBLIC_API_POSTFIX;
 
   useEffect(() => {
     const normalized = debouncedValue.toLowerCase().trim();
@@ -73,13 +73,12 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           id="subdomain"
           value={value}
           onChange={(e) => {
-              onAvailabilityChange?.(false);
+            onAvailabilityChange?.(false);
             onChange(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))
           }}
           placeholder="your-salon-name"
           className="border-none focus-visible:ring-0"
         />
-        <span className="shrink-0 pr-3 text-sm text-muted-foreground">{postfix}</span>
       </div>
 
       <div className="mt-1.5 flex items-center gap-1.5 text-xs">
@@ -93,6 +92,13 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           <>
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             <span className="text-success">Available!</span>
+            <br />
+            <p className="text-xs text-muted-foreground">
+              Your website will be available at{" "}
+              <strong className="text-foreground">
+                {getSiteURL(value || 'your-salon-name')}
+              </strong>
+            </p>
           </>
         )}
         {(status === "unavailable" || status === "invalid") && (
@@ -102,6 +108,7 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           </>
         )}
       </div>
+
     </div>
   );
 }
