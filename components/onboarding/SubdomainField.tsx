@@ -92,13 +92,7 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           <>
             <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             <span className="text-success">Available!</span>
-            <br />
-            <p className="text-xs text-muted-foreground">
-              Your website will be available at{" "}
-              <strong className="text-foreground">
-                {getSiteURL(value || 'your-salon-name')}
-              </strong>
-            </p>
+
           </>
         )}
         {(status === "unavailable" || status === "invalid") && (
@@ -108,7 +102,14 @@ export function SubdomainField({ value, onChange, onAvailabilityChange, userDoma
           </>
         )}
       </div>
-
+      {
+        status === 'available' ? <p className="text-xs mt-2 text-muted-foreground">
+          Your website will be available at{" "}
+          <strong className="text-foreground">
+            {getSiteURL(value || 'your-salon-name')}
+          </strong>
+        </p> : <></>
+      }
     </div>
   );
 }

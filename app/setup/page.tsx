@@ -81,12 +81,7 @@ function OnboardingInner() {
                             onChange={setSubdomain}
                             onAvailabilityChange={setSubdomainAvailable}
                         />
-                        <p className="text-sm text-muted-foreground">
-                            Your website will be available at{" "}
-                            <strong className="text-foreground">
-                                {getSiteURL(subdomain || "your-salon-name")}
-                            </strong>
-                        </p>
+
                     </div>
 
                     {submitError && <p className="mt-4 text-sm text-destructive">{submitError}</p>}
@@ -94,8 +89,7 @@ function OnboardingInner() {
                     <div className="mt-10 flex items-center justify-between">
                         <Button variant="outline" disabled={submitting}>
                             <Link href="/template-list">
-                                <ArrowLeft className="h-4 w-4" />
-                                Back
+                                <ArrowLeft className="h-4 w-4 inline" />&nbsp;Back
                             </Link>
                         </Button>
                         <Button onClick={handleContinue} disabled={submitting || !subdomainAvailable}>
